@@ -1,47 +1,5 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route, useParams, useNavigate } from "react-router-dom";
-
-function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/:calendarId" element={<Calendar />} />
-      </Routes>
-    </Router>
-  );
-}
-
-function Home() {
-  const [name, setName] = useState("");
-  const [calendarId, setCalendarId] = useState("");
-  const navigate = useNavigate();
-
-  const handleSubmit = () => {
-    if (name && calendarId) {
-      navigate(`/${calendarId}`);
-    }
-  };
-
-  return (
-    <div>
-      <h1>Calendario de Quedadas</h1>
-      <input
-        type="text"
-        placeholder="Tu nombre"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="ID del calendario"
-        value={calendarId}
-        onChange={(e) => setCalendarId(e.target.value)}
-      />
-      <button onClick={handleSubmit}>Entrar</button>
-    </div>
-  );
-}
+import { useParams } from "react-router-dom";
 
 function Calendar() {
   const { calendarId } = useParams();
@@ -63,13 +21,12 @@ function Calendar() {
 
   const handleFinalize = () => {
     const allUsersData = [
-      // Ejemplo de datos de usuarios para simular la funcionalidad
       { name: "Usuario1", green: [1, 2, 3], red: [5, 6], orange: [4] },
       { name: "Usuario2", green: [1, 3, 4], red: [6], orange: [2, 5] },
       { name: "Usuario3", green: [1, 3, 6], red: [2, 5], orange: [4] },
     ];
 
-    const allDays = Array.from({ length: 31 }, (_, i) => i + 1); // Simula un mes de 31 días
+    const allDays = Array.from({ length: 31 }, (_, i) => i + 1);
     const recommendations = allDays
       .filter((day) => !allUsersData.some((user) => user.red.includes(day))) // Descartar días rojos
       .map((day) => {
@@ -77,7 +34,7 @@ function Calendar() {
         const orangeCount = allUsersData.filter((user) => user.orange.includes(day)).length;
         return { day, greenCount, orangeCount, priority: greenCount - orangeCount };
       })
-      .sort((a, b) => b.priority - a.priority || a.orangeCount - b.orangeCount); // Ordenar por prioridad
+      .sort((a, b) => b.priority - a.priority || a.orangeCount - b.orangeCount);
 
     setFinalRecommendation(recommendations);
     setStep(4);
@@ -220,4 +177,4 @@ function CalendarGrid({ selectedDays = {}, recommendedDays = [], toggleDay, onDa
   );
 }
 
-export default App;
+export default Calendar;

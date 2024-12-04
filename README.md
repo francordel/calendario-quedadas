@@ -71,7 +71,7 @@ Este proyecto está listo para ser desplegado en plataformas como Vercel o Netli
 
 ### Desplegar en Vercel
 
-Crea una cuenta en Vercel https://vercel.com/.
+Crea una cuenta en [Vercel](https://vercel.com/).
 Conecta tu repositorio de GitHub con Vercel.
 Configura las variables de entorno en Vercel para las credenciales de Firebase (apiKey, authDomain, etc.).
 Vercel desplegará tu aplicación automáticamente.
