@@ -19,7 +19,7 @@ function Header() {
             fontSize: { xs: "0.8rem", sm: "1.5rem", md: "1.75rem" }, // Tamaños según el tamaño de la pantalla
           }}
         >
-          Date Calendar
+         Mi Date Calendar
         </Typography>
 
         {/* Separador vertical */}
