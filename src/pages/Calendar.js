@@ -36,9 +36,9 @@ function Calendar() {
   };
 
   const events = [
-    ...selectedDays.green.map((day) => ({ start: new Date(day), end: new Date(day), title: "Disponible", color: "#A5D6A7" })), // Verde pastel
-    ...selectedDays.red.map((day) => ({ start: new Date(day), end: new Date(day), title: "No disponible", color: "#EF9A9A" })), // Rojo pastel
-    ...selectedDays.orange.map((day) => ({ start: new Date(day), end: new Date(day), title: "Esfuerzo", color: "#FFE082" })), // Naranja pastel
+    ...selectedDays.green.map((day) => ({ start: new Date(day), end: new Date(day), title: "Sí", color: "#A5D6A7" })), // Verde pastel
+    ...selectedDays.red.map((day) => ({ start: new Date(day), end: new Date(day), title: "No", color: "#EF9A9A" })), // Rojo pastel
+    ...selectedDays.orange.map((day) => ({ start: new Date(day), end: new Date(day), title: "?", color: "#FFE082" })), // Naranja pastel
   ];
 
   const eventStyleGetter = (event) => {
@@ -61,8 +61,8 @@ function Calendar() {
     alignItems: "center",
     width: "100vw", // Ocupar todo el ancho visible
     height: "100vh", // Ocupar toda la altura visible
-    padding: 2,
-    backgroundColor: "#F3E5F5", // Malva pastel para cubrir todo
+    padding: 0,
+    backgroundColor: "#e7f2f6", // Malva pastel para cubrir todo
   }}
 >
   <Typography variant="h4" gutterBottom>
@@ -73,8 +73,10 @@ function Calendar() {
   </Typography>
   <Box
     sx={{
-      width: { xs: "100%", sm: "90%", md: "70%" }, // Ancho dinámico según el tamaño de la pantalla
-      maxWidth: "800px",
+      height:{xs: "55%", sm: "70%", md: "70%" },
+      width: { xs: "94%", sm: "90%", md: "70%" }, // Ancho dinámico según el tamaño de la pantalla
+      maxWidth: "900px",
+      maxHeight: "900px",
       borderRadius: "16px", // Bordes redondeados
       overflow: "hidden",
       boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)", // Sombra
@@ -88,7 +90,7 @@ function Calendar() {
       selectable
       onSelectSlot={handleSelectSlot}
       style={{
-        height: "500px", // Altura por defecto
+        height: "100%", // Altura por defecto
         width: "100%", // Ajusta al contenedor padre
         fontSize: "14px", // Tamaño de texto más pequeño para pantallas pequeñas
       }}
