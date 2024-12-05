@@ -1,0 +1,22 @@
+.rbc-calendar {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 10px;
+}
+
+.rbc-today {
+  background-color: #E1BEE7 !important; /* Malva pastel para el día actual */
+}
+
+.rbc-event {
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.rbc-toolbar {
+  background-color: #EDE7F6; /* Malva claro para la barra de herramientas */
+  border-radius: 16px;
+  padding: 8px;
+  color: #6A1B9A; /* Texto morado oscuro */
+}
