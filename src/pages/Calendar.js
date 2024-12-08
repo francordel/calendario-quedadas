@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Calendar as BigCalendar, dateFnsLocalizer } from "react-big-calendar";
-import { format, parse, startOfWeek, getDay } from "date-fns";
 import { es } from "date-fns/locale";
+import { format, parse, startOfWeek, getDay } from "date-fns";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { Menu, MenuItem, Button, Typography, Box } from "@mui/material";
+import { Button, Typography, Box, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import "./Calendar.css";
-import { orange } from "@mui/material/colors";
+
+// Importamos las funciones de utilidad
+import { getAllDaysInNextYears, generateEvents, eventStyleGetter, dayPropGetter } from './CalendarUtils';
 
 const locales = { es };
 
@@ -24,35 +26,23 @@ function Calendar() {
   const [events, setEvents] = useState([]);
   const [step, setStep] = useState(1);
   const [popupDate, setPopupDate] = useState(null);
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
 
   const handleSelectSlot = ({ start }) => {
     const today = new Date().setHours(0, 0, 0, 0);
     if (start >= today) {
       setPopupDate(start);
-      setAnchorEl(document.body);
+      setOpenDialog(true); // Abrir el diálogo cuando se selecciona un día
     }
   };
 
-  const handleMenuClose = () => {
+  const handleDialogClose = () => {
     setPopupDate(null);
-    setAnchorEl(null);
-  };
-
-  const dayPropGetter = (date) => {
-    const today = new Date();
-    const isPast = date < today.setHours(0, 0, 0, 0); // Verifica si es día pasado
-  
-    return {
-      style: {
-        backgroundColor: isPast ? "#d3d3d3" : "white", // Gris para días pasados
-        color: isPast ? "#9e9e9e" : "black", // Texto gris claro para días pasados
-        pointerEvents: isPast ? "none" : "auto", // Deshabilita interacción para días pasados
-      },
-    };
+    setOpenDialog(false);
   };
 
   const handleDaySelection = (type) => {
+    console.log("dia seleccionado");
     setSelectedDays((prev) => {
       const updated = { ...prev };
       const dateStr = popupDate.toDateString();
@@ -63,16 +53,23 @@ function Calendar() {
       });
 
       updated[type].push(dateStr); // Añadir al estado seleccionado
-    
-
-      // Actualizar eventos visuales
-      const updatedEvents = generateEvents(updated);
+      const updatedEvents = generateEvents(updated, handleEventClick);
       setEvents(updatedEvents);
 
       return updated;
     });
-    handleMenuClose();
+    handleDialogClose();
   };
+
+  const handleEventClick = (eventDate) => {
+    console.log("Evento clickeado:", eventDate); // Esto debería mostrarse en la consola
+    setPopupDate(eventDate); // Establece la fecha del evento en el popup
+    setOpenDialog(true); // Abre el popup
+  };
+  
+  
+
+  
 
   const handleContinue = () => {
     if (step === 1) {
@@ -82,70 +79,23 @@ function Calendar() {
       const unselectedDays = allDays.filter(
         (day) => !selectedDates.includes(day.toDateString())
       );
-  
+
       // Actualizar el estado de selectedDays primero
       const updatedSelectedDays = {
         ...selectedDays,
         orange: unselectedDays.map((day) => day.toDateString()), // Marcar como "?"
       };
-  
+
       setSelectedDays(updatedSelectedDays);
-  
+
       // Luego generar eventos basados en el nuevo estado
-      const updatedEvents = generateEvents(updatedSelectedDays);
+      const updatedEvents = generateEvents(updatedSelectedDays, handleEventClick);
       setEvents(updatedEvents);
-  
+
       setStep(2);
     } else {
       console.log("Flujo terminado con los días seleccionados:", selectedDays);
     }
-  };
-  
-  const generateEvents = (days) => {
-    const newEvents = [];
-    Object.entries(days).forEach(([key, dates]) => {
-      dates.forEach((date) => {
-        newEvents.push({
-          start: new Date(date),
-          end: new Date(date),
-          title: key === "green" ? "Sí" : key === "red" ? "No" : "?",
-          color: key === "green" ? "#A5D6A7" : key === "red" ? "#EF9A9A" : "#FFE082",
-        });
-      });
-    });
-    return newEvents;
-  };
-
-  const getAllDaysInNextYears = () => {
-    const start = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
-    const end = new Date(start.getFullYear()+4, start.getMonth() + 1, 0);
-    const days = [];
-    let current = new Date(start);
-
-    while (current <= end) {
-      days.push(new Date(current));
-      current.setDate(current.getDate() + 1);
-    }
-
-    return days;
-  };
-
-  const eventStyleGetter = (event) => {
-    const today = new Date();
-    const eventDate = new Date(event.start);
-    const isPast = eventDate < today.setHours(0, 0, 0, 0);
-
-    const style = {
-      backgroundColor: isPast ? "#d3d3d3" : event.color,
-      color: isPast ? "#9e9e9e" : "white",
-      borderRadius: "10px",
-      border: "none",
-      display: "block",
-      padding: "5px",
-      pointerEvents: isPast ? "none" : "auto",
-    };
-
-    return { style };
   };
 
   return (
@@ -185,7 +135,7 @@ function Calendar() {
           endAccessor="end"
           selectable
           onSelectSlot={handleSelectSlot}
-          views={['month']} // Solo muestra la vista de mes
+          views={["month"]} // Solo muestra la vista de mes
           style={{
             height: "100%", // Altura por defecto
             width: "100%", // Ajusta al contenedor padre
@@ -195,7 +145,6 @@ function Calendar() {
           dayPropGetter={dayPropGetter} // Aplica estilo a todos los días
           components={{
             toolbar: (props) => {
-          
               return (
                 <Box
                   sx={{
@@ -223,7 +172,7 @@ function Calendar() {
                   >
                     {props.label} {/* Esto muestra el mes y año */}
                   </Typography>
-                  
+
                   <Button
                     onClick={() => props.onNavigate("NEXT")}
                     sx={{
@@ -240,26 +189,32 @@ function Calendar() {
               );
             },
           }}
-          
         />
       </Box>
 
-      <Menu
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
-        anchorEl={anchorEl}
-        PaperProps={{
-          style: {
-            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
-            borderRadius: "8px",
-            padding: "8px",
-          },
-        }}
-      >
-        <MenuItem onClick={() => handleDaySelection("green")}>Sí</MenuItem>
-        <MenuItem onClick={() => handleDaySelection("red")}>No</MenuItem>
-        <MenuItem onClick={() => handleDaySelection("orange")}>?</MenuItem>
-      </Menu>
+      {/* Aquí viene el nuevo diálogo */}
+      <Dialog open={openDialog} onClose={handleDialogClose} maxWidth="xs" fullWidth>
+        {/* Título con la fecha formateada */}
+        <DialogTitle>
+          ¿Puedes quedar el {popupDate ? format(popupDate, "dd/MM/yyyy") : ""}
+        </DialogTitle>
+        <DialogContent>
+          <Button onClick={() => handleDaySelection("green")} fullWidth color="success">
+            Sí
+          </Button>
+          <Button onClick={() => handleDaySelection("red")} fullWidth color="error">
+            No
+          </Button>
+          <Button onClick={() => handleDaySelection("orange")} fullWidth color="warning">
+            ?
+          </Button>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            Cancelar
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Box
         sx={{
