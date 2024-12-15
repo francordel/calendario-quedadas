@@ -8,7 +8,9 @@ import { Button, Typography, Box, Dialog, DialogActions, DialogContent, DialogTi
 import "./Calendar.css";
 
 // Importamos las funciones de utilidad
-import { getAllDaysInNextYears, generateEvents, eventStyleGetter, dayPropGetter } from './CalendarUtils';
+import { generateEvents, eventStyleGetter, dayPropGetter } from './CalendarUtils';
+import Recommendation from '../components/Recommendation';  // Ajusta la ruta según tu estructura de carpetas
+import { saveUserSelections } from '../services/mockDatabase';  // Ajusta la ruta según tu estructura de archivos
 
 const locales = { es };
 
@@ -27,6 +29,8 @@ function Calendar() {
   const [step, setStep] = useState(1);
   const [popupDate, setPopupDate] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
+  // ... existing state ...
+  const [showRecommendation, setShowRecommendation] = useState(false);
 
   const handleSelectSlot = ({ start }) => {
     const today = new Date().setHours(0, 0, 0, 0);
@@ -66,35 +70,14 @@ function Calendar() {
     setPopupDate(eventDate); // Establece la fecha del evento en el popup
     setOpenDialog(true); // Abre el popup
   };
-  
-  
-
-  
 
   const handleContinue = () => {
     if (step === 1) {
-      // Marcar automáticamente los días no seleccionados como "?"
-      const allDays = getAllDaysInNextYears();
-      const selectedDates = [...selectedDays.green, ...selectedDays.red];
-      const unselectedDays = allDays.filter(
-        (day) => !selectedDates.includes(day.toDateString())
-      );
-
-      // Actualizar el estado de selectedDays primero
-      const updatedSelectedDays = {
-        ...selectedDays,
-        orange: unselectedDays.map((day) => day.toDateString()), // Marcar como "?"
-      };
-
-      setSelectedDays(updatedSelectedDays);
-
-      // Luego generar eventos basados en el nuevo estado
-      const updatedEvents = generateEvents(updatedSelectedDays, handleEventClick);
-      setEvents(updatedEvents);
-
-      setStep(2);
+        setStep(2);
     } else {
-      console.log("Flujo terminado con los días seleccionados:", selectedDays);
+        // Guardar las selecciones en la base de datos o donde corresponda
+        saveUserSelections(calendarId, selectedDays);
+        setShowRecommendation(true);
     }
   };
 
@@ -106,14 +89,34 @@ function Calendar() {
         alignItems: "center",
         width: "100vw",
         height: "100vh",
-        padding: 0,
+        padding: "1.8",
         backgroundColor: "#e7f2f6",
       }}
     >
-      <Typography variant="h4" gutterBottom>
-        Calendario: {calendarId}
+      <Typography 
+        variant="h4" 
+        gutterBottom
+        sx={{
+          marginBottom: "1.5rem",
+          textAlign: "center",
+          width: "100%",
+          whiteSpace: { xs: 'pre-line', sm: 'nowrap' },
+          '& > *': {
+            textAlign: 'center'
+          }
+        }}
+      >
+        {`Calendario: ${calendarId}`}
       </Typography>
-      <Typography variant="body1" gutterBottom>
+      <Typography 
+        variant="body1" 
+        gutterBottom
+        sx={{
+          marginBottom: "1.5rem",
+          textAlign: "center",
+          width: "100%"
+        }}
+      >
         Paso {step === 1 ? "1: Selecciona tus días disponibles" : "2: Revisa tus días seleccionados"}
       </Typography>
 
@@ -122,6 +125,7 @@ function Calendar() {
           height: { xs: "55%", sm: "70%", md: "70%" },
           width: { xs: "94%", sm: "90%", md: "70%" },
           maxWidth: "900px",
+          alignSelf: "center",
           maxHeight: "900px",
           borderRadius: "16px",
           overflow: "hidden",
@@ -215,7 +219,14 @@ function Calendar() {
           </Button>
         </DialogActions>
       </Dialog>
-
+      {/* Añadir aquí el componente Recommendation */}
+      {showRecommendation && (
+        <Recommendation 
+          calendarId={calendarId}
+          currentUserSelections={selectedDays}
+          onClose={() => setShowRecommendation(false)}
+        />
+      )}
       <Box
         sx={{
           display: "flex",

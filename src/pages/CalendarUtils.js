@@ -1,23 +1,8 @@
-    // Genera todos los días en los próximos años
-    export const getAllDaysInNextYears = () => {
-        const start = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
-        const end = new Date(start.getFullYear() + 4, start.getMonth() + 1, 0);
-        const days = [];
-        let current = new Date(start);
-    
-        while (current <= end) {
-        days.push(new Date(current));
-        current.setDate(current.getDate() + 1);
-        }
-    
-        return days;
-    };
-  
-    // Genera los eventos a partir de los días seleccionados
-    export const generateEvents = (days, handleEventClick) => {
-        console.log("Generando eventos...");
-        const newEvents = [];
-        Object.entries(days).forEach(([key, dates]) => {
+// Genera los eventos a partir de los días seleccionados
+export const generateEvents = (days, handleEventClick) => {
+    console.log("Generando eventos...");
+    const newEvents = [];
+    Object.entries(days).forEach(([key, dates]) => {
           dates.forEach((date) => {
             newEvents.push({
               start: new Date(date),
