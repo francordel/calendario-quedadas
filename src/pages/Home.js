@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Box, Typography, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
-import { calendarExists, createCalendar, checkCalendarPassword } from "../services/mockDatabase";
+import { calendarExists, createCalendar, checkCalendarPassword } from "../services";
 
 function Home() {
   const [name, setName] = useState("");

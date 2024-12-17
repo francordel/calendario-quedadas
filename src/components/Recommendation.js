@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogActions, Button, Typography, CircularProgress, Box } from '@mui/material';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { fetchCalendarSelections } from '../services/mockDatabase';
+import { fetchCalendarSelections } from '../services'; // Import desde index.js
 
 const Recommendation = ({ calendarId, currentUserName, currentUserSelections, onClose }) => {
     const [loading, setLoading] = useState(true);
