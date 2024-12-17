@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Calendar as BigCalendar, dateFnsLocalizer } from "react-big-calendar";
 import { es } from "date-fns/locale";
 import { format, parse, startOfWeek, getDay } from "date-fns";
@@ -24,13 +24,16 @@ const localizer = dateFnsLocalizer({
 
 function Calendar() {
   const { calendarId } = useParams();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const userName = queryParams.get('name');
   const [selectedDays, setSelectedDays] = useState({ green: [], red: [], orange: [] });
   const [events, setEvents] = useState([]);
   const [step, setStep] = useState(1);
   const [popupDate, setPopupDate] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
-  // ... existing state ...
   const [showRecommendation, setShowRecommendation] = useState(false);
+  const navigate = useNavigate();
 
   const handleSelectSlot = ({ start }) => {
     const today = new Date().setHours(0, 0, 0, 0);
@@ -73,11 +76,11 @@ function Calendar() {
 
   const handleContinue = () => {
     if (step === 1) {
-        setStep(2);
+      setStep(2);
     } else {
-        // Guardar las selecciones en la base de datos o donde corresponda
-        saveUserSelections(calendarId, selectedDays);
-        setShowRecommendation(true);
+      // Ahora guardamos usando userName
+      saveUserSelections(userName, calendarId, selectedDays);
+      setShowRecommendation(true);
     }
   };
 
@@ -88,8 +91,8 @@ function Calendar() {
         flexDirection: "column",
         alignItems: "center",
         width: "100vw",
-        height: "100vh",
-        padding: "1.8",
+        height: "auto",
+        padding: "1",
         backgroundColor: "#e7f2f6",
       }}
     >
@@ -117,16 +120,15 @@ function Calendar() {
           width: "100%"
         }}
       >
-        Paso {step === 1 ? "1: Selecciona tus días disponibles" : "2: Revisa tus días seleccionados"}
+        Paso {step === 1 ? "1: Selecciona tus días disponibles (Sí, NO, '?' Significa esfuerzo)" : "2: Revisa tus días seleccionados '?' Significa esfuerzo"}
       </Typography>
 
       <Box
         sx={{
-          height: { xs: "55%", sm: "70%", md: "70%" },
+          height: { xs: "350px", sm: "500px", md: "650px" },
           width: { xs: "94%", sm: "90%", md: "70%" },
           maxWidth: "900px",
           alignSelf: "center",
-          maxHeight: "900px",
           borderRadius: "16px",
           overflow: "hidden",
           boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
@@ -223,6 +225,7 @@ function Calendar() {
       {showRecommendation && (
         <Recommendation 
           calendarId={calendarId}
+          currentUserName={userName}  // Pasamos el nombre del usuario
           currentUserSelections={selectedDays}
           onClose={() => setShowRecommendation(false)}
         />
@@ -239,7 +242,7 @@ function Calendar() {
         <Button
           variant="outlined"
           color="secondary"
-          onClick={() => setStep((prev) => (prev > 1 ? prev - 1 : 1))}
+          onClick={() => navigate('/')}
         >
           Volver
         </Button>

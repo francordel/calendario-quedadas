@@ -19,7 +19,7 @@ function Header() {
             fontSize: { xs: "0.8rem", sm: "1.5rem", md: "1.75rem" }, // Tamaños según el tamaño de la pantalla
           }}
         >
-         Mi Date Calendar
+         Mi Quedada
         </Typography>
 
         {/* Separador vertical */}
@@ -34,7 +34,7 @@ function Header() {
         ></Box>
         {/* Imagen de Fran Cortés */}
         <IconButton
-          href="https://francordel.github.io/" 
+          href="https://linktr.ee/francordel.ia" 
           target="_blank"
           rel="noopener noreferrer"
           sx={{ padding: 0 }} // Quitar padding adicional de IconButton
@@ -65,6 +65,7 @@ function Header() {
         >
           <img
             src="/images/logoLinkedin.png"
+            alt="LinkedIn"
             style={{ width: "24px", height: "24px" }}
           />
         </IconButton>
@@ -77,6 +78,7 @@ function Header() {
         >
           <img
             src="/images/logoGithub.png"
+            alt="GitHub"
             style={{ width: "24px", height: "24px" }}
           />
         </IconButton>

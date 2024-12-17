@@ -1,93 +1,101 @@
-// Datos de prueba simulados
+// mockDatabase.js
+
+// Añadimos un objeto que guardará la info de cada calendario, incluida la contraseña.
+// Ahora cada entrada de mockDatabase contendrá un objeto con el array de usuarios y la password.
 export const mockSelections = {
-    'calendario1': [
-        {
-            userId: "usuario1",
-            selectedDays: {
-                green: [
-                    new Date(2025, 0, 15).toDateString(), // 15 de enero
-                    new Date(2025, 0, 16).toDateString(), // 16 de enero
-                    new Date(2025, 0, 20).toDateString()  // 20 de enero
-                ],
-                red: [
-                    new Date(2025, 0, 10).toDateString(),
-                    new Date(2025, 0, 11).toDateString()
-                ],
-                orange: [
-                    new Date(2025, 0, 18).toDateString()
-                ]
+    'calendario1': {
+        password: '1234', // Contraseña existente para calendario1 (ejemplo)
+        users: [
+            {
+                userId: "usuario1",
+                selectedDays: {
+                    green: [
+                        new Date(2025, 0, 15).toDateString(), 
+                        new Date(2025, 0, 16).toDateString(), 
+                        new Date(2025, 0, 20).toDateString()  
+                    ],
+                    red: [
+                        new Date(2025, 0, 10).toDateString(),
+                        new Date(2025, 0, 11).toDateString()
+                    ],
+                    orange: [
+                        new Date(2025, 0, 18).toDateString()
+                    ]
+                }
+            },
+            {
+                userId: "usuario2",
+                selectedDays: {
+                    green: [
+                        new Date(2025, 0, 15).toDateString(), 
+                        new Date(2025, 0, 20).toDateString()  
+                    ],
+                    red: [
+                        new Date(2025, 0, 11).toDateString()
+                    ],
+                    orange: [
+                        new Date(2025, 0, 16).toDateString()
+                    ]
+                }
             }
-        },
-        {
-            userId: "usuario2",
-            selectedDays: {
-                green: [
-                    new Date(2025, 0, 15).toDateString(), // 15 de enero
-                    new Date(2025, 0, 20).toDateString()  // 20 de enero
-                ],
-                red: [
-                    new Date(2025, 0, 11).toDateString()
-                ],
-                orange: [
-                    new Date(2025, 0, 16).toDateString()
-                ]
-            }
-        }
-    ],
-    'calendario2': [
-        // Puedes añadir más datos de prueba para otro calendario
-    ]
+        ]
+    },
+    'calendario2': {
+        password: 'abcd', // Otra contraseña de ejemplo
+        users: []
+    }
 };
 
-// Inicializamos la base de datos como un objeto, no como array
+// Actualizamos la variable mockDatabase
 let mockDatabase = {...mockSelections};
-/*
-  // Función para guardar las selecciones del usuario
-  export const saveUserSelections = async (calendarId, selectedDays) => {
-    try {
-      // Aquí deberías implementar la lógica para guardar en tu backend
-      // Por ejemplo, usando Firebase, una API REST, etc.
-      await fetch('/api/calendar/selections', {
-        method: 'POST',
-        body: JSON.stringify({
-          calendarId,
-          selectedDays
-        })
-      });
-    } catch (error) {
-      console.error('Error al guardar las selecciones:', error);
-    }
-  };
-  */
-  
-  // Función simulada que guarda las selecciones en nuestra "base de datos" mock
-  // Función para guardar selecciones
+
+// Función para verificar si existe el calendario
+export const calendarExists = (calendarId) => {
+    return mockDatabase[calendarId] !== undefined;
+};
+
+// Función para crear un nuevo calendario
+export const createCalendar = (calendarId, password) => {
+    mockDatabase[calendarId] = {
+        password,
+        users: []
+    };
+};
+
+// Función para comprobar la contraseña
+export const checkCalendarPassword = (calendarId, password) => {
+    if (!calendarExists(calendarId)) return false;
+    return mockDatabase[calendarId].password === password;
+};
+
+// Guardado de selecciones (actualizado según la nueva estructura)
 export const saveUserSelections = async (userId, calendarId, selectedDays) => {
     try {
         await new Promise(resolve => setTimeout(resolve, 500));
 
-        // Aseguramos que existe el array para este calendario
-        if (!mockDatabase[calendarId]) {
-            mockDatabase[calendarId] = [];
+        // Aseguramos que exista el calendario
+        if (!calendarExists(calendarId)) {
+            console.error('El calendario no existe.');
+            return false;
         }
 
+        const calendarData = mockDatabase[calendarId];
         // Buscamos si existe el usuario en este calendario
-        const existingUserIndex = mockDatabase[calendarId].findIndex(
+        const existingUserIndex = calendarData.users.findIndex(
             user => user.userId === userId
         );
 
         if (existingUserIndex !== -1) {
             // Actualizamos usuario existente
-            mockDatabase[calendarId][existingUserIndex].selectedDays = selectedDays;
-            console.log('Selecciones actualizadas para usuario:', mockDatabase[calendarId][existingUserIndex]);
-            console.log('Selecciones actualizadas para usuario:', calendarId);
+            calendarData.users[existingUserIndex].selectedDays = selectedDays;
+            console.log('Selecciones actualizadas para usuario:', userId);
         } else {
             // Creamos nuevo usuario
             const newSelection = {
                 userId,
                 selectedDays
             };
-            mockDatabase[calendarId].push(newSelection);
+            calendarData.users.push(newSelection);
             console.log('Nuevo usuario añadido:', newSelection);
         }
 
@@ -101,5 +109,5 @@ export const saveUserSelections = async (userId, calendarId, selectedDays) => {
 // Función para obtener selecciones
 export const fetchCalendarSelections = async (calendarId) => {
     await new Promise(resolve => setTimeout(resolve, 1000));
-    return mockDatabase[calendarId] || [];
+    return calendarExists(calendarId) ? mockDatabase[calendarId].users : [];
 };

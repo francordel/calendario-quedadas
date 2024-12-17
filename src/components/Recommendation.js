@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Dialog, DialogContent, DialogActions, Button, Typography, CircularProgress, Box, IconButton } from '@mui/material';
+import { Dialog, DialogContent, DialogActions, Button, Typography, CircularProgress, Box } from '@mui/material';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { fetchCalendarSelections } from '../services/mockDatabase';
 
-const Recommendation = ({ calendarId, currentUserSelections, onClose }) => {
+const Recommendation = ({ calendarId, currentUserName, currentUserSelections, onClose }) => {
     const [loading, setLoading] = useState(true);
     const [recommendedDates, setRecommendedDates] = useState([]);
     const [currentDateIndex, setCurrentDateIndex] = useState(0);
@@ -47,62 +47,66 @@ const Recommendation = ({ calendarId, currentUserSelections, onClose }) => {
 
     const analyzeDates = async () => {
         try {
-            const previousSelections = await fetchCalendarSelections(calendarId);
-            
-            const currentUserId = `usuario${previousSelections.length + 1}`;
-            const allSelections = [
-                ...previousSelections,
-                { userId: currentUserId, selectedDays: currentUserSelections }
-            ];
-            
-            const dateAnalysis = {};
-            
-            allSelections.forEach(userSelection => {
-                Object.entries(userSelection.selectedDays).forEach(([type, dates]) => {
-                    dates.forEach(date => {
-                        if (!dateAnalysis[date]) {
-                            dateAnalysis[date] = { yes: 0, no: 0, maybe: 0 };
-                        }
-                        
-                        if (type === 'green') dateAnalysis[date].yes++;
-                        if (type === 'red') dateAnalysis[date].no++;
-                        if (type === 'orange') dateAnalysis[date].maybe++;
-                    });
-                });
-            });
-
-            const possibleDates = Object.entries(dateAnalysis)
-                .filter(([date]) => !currentUserSelections.red.includes(date))
-                .map(([date, counts]) => ({
-                    date,
-                    counts,
-                    hasNegatives: counts.no > 0,
-                    score: counts.yes + (counts.maybe * 0.1)
-                }));
-
-            const sortedDates = possibleDates.sort((a, b) => {
-                if (a.hasNegatives !== b.hasNegatives) {
-                    return a.hasNegatives ? 1 : -1;
+        const previousSelections = await fetchCalendarSelections(calendarId);
+        const currentUserId = currentUserName; // Ya usamos el nombre directamente
+    
+        // Verificar si el usuario ya existe
+        const userAlreadyExists = previousSelections.some(u => u.userId === currentUserId);
+    
+        const allSelections = userAlreadyExists 
+            ? previousSelections 
+            : [...previousSelections, { userId: currentUserId, selectedDays: currentUserSelections }];
+    
+        // Ahora allSelections no tendrá duplicados
+        const dateAnalysis = {};
+    
+        allSelections.forEach(userSelection => {
+            Object.entries(userSelection.selectedDays).forEach(([type, dates]) => {
+            dates.forEach(date => {
+                if (!dateAnalysis[date]) {
+                dateAnalysis[date] = { yes: 0, no: 0, maybe: 0 };
                 }
-                return b.score - a.score;
+    
+                if (type === 'green') dateAnalysis[date].yes++;
+                if (type === 'red') dateAnalysis[date].no++;
+                if (type === 'orange') dateAnalysis[date].maybe++;
             });
-
-            setRecommendedDates(sortedDates.map(item => ({
-                date: new Date(item.date),
-                counts: item.counts
-            })));
-
-            if (sortedDates.length > 0) {
-                setUserVotes(generateDetailedExplanation(sortedDates[0].date, allSelections));
-                setExplanation(generateExplanation(sortedDates[0].counts));
+            });
+        });
+    
+        const possibleDates = Object.entries(dateAnalysis)
+            .filter(([date]) => !currentUserSelections.red.includes(date))
+            .map(([date, counts]) => ({
+            date,
+            counts,
+            hasNegatives: counts.no > 0,
+            score: counts.yes + (counts.maybe * 0.1)
+            }));
+    
+        const sortedDates = possibleDates.sort((a, b) => {
+            if (a.hasNegatives !== b.hasNegatives) {
+            return a.hasNegatives ? 1 : -1;
             }
-
-            setLoading(false);
+            return b.score - a.score;
+        });
+    
+        setRecommendedDates(sortedDates.map(item => ({
+            date: new Date(item.date),
+            counts: item.counts
+        })));
+    
+        if (sortedDates.length > 0) {
+            setUserVotes(generateDetailedExplanation(sortedDates[0].date, allSelections));
+            setExplanation(generateExplanation(sortedDates[0].counts));
+        }
+    
+        setLoading(false);
         } catch (error) {
-            console.error('Error al analizar las fechas:', error);
-            setLoading(false);
+        console.error('Error al analizar las fechas:', error);
+        setLoading(false);
         }
     };
+  
 
     useEffect(() => {
         analyzeDates();
@@ -110,18 +114,20 @@ const Recommendation = ({ calendarId, currentUserSelections, onClose }) => {
 
     useEffect(() => {
         if (recommendedDates.length > 0) {
-            const currentDate = recommendedDates[currentDateIndex];
-            setExplanation(generateExplanation(currentDate.counts));
-            fetchCalendarSelections(calendarId).then(previousSelections => {
-                const currentUserId = `usuario${previousSelections.length + 1}`;
-                const allSelections = [
-                    ...previousSelections,
-                    { userId: currentUserId, selectedDays: currentUserSelections }
-                ];
-                setUserVotes(generateDetailedExplanation(currentDate.date.toDateString(), allSelections));
-            });
+          const currentDate = recommendedDates[currentDateIndex];
+          setExplanation(generateExplanation(currentDate.counts));
+          fetchCalendarSelections(calendarId).then(previousSelections => {
+            const currentUserId = currentUserName;
+            const userAlreadyExists = previousSelections.some(u => u.userId === currentUserId);
+            const allSelections = userAlreadyExists 
+              ? previousSelections 
+              : [...previousSelections, { userId: currentUserId, selectedDays: currentUserSelections }];
+      
+            setUserVotes(generateDetailedExplanation(currentDate.date.toDateString(), allSelections));
+          });
         }
-    }, [currentDateIndex]);
+      }, [currentDateIndex]);
+      
 
     return (
         <Dialog open={true} onClose={onClose} maxWidth="sm" fullWidth>

@@ -1,23 +1,37 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Calendar from "./pages/Calendar";
-import { Container } from "@mui/material";
+import { Container, Box } from "@mui/material";
 
 function App() {
   return (
     <Router>
-      <Header />
-      <Container
-        disableGutters // Desactiva los márgenes predeterminados del Container
-        sx={{ marginTop: 2, marginLeft:-1}}
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '0vh',
+        }}
       >
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/:calendarId" element={<Calendar />} />
-        </Routes>
-      </Container>
+        <Header />
+        <Container
+          disableGutters
+          sx={{ 
+            marginTop: 0, 
+            marginLeft: -1,
+            flexGrow: 1,
+          }}
+        >
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/:calendarId" element={<Calendar />} />
+          </Routes>
+        </Container>
+        <Footer />
+      </Box>
     </Router>
   );
 }
