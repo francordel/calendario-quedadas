@@ -74,13 +74,18 @@ function Calendar() {
     setOpenDialog(true); // Abre el popup
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (step === 1) {
       setStep(2);
     } else {
-      // Ahora guardamos usando userName
-      saveUserSelections(userName, calendarId, selectedDays);
-      setShowRecommendation(true);
+      try {
+        // Esperamos a que se complete el guardado antes de mostrar la recomendación
+        await saveUserSelections(userName, calendarId, selectedDays);
+        setShowRecommendation(true);
+      } catch (error) {
+        console.error("Error al guardar las selecciones:", error);
+        // Aquí podrías mostrar un mensaje de error al usuario
+      }
     }
   };
 
