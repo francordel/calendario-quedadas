@@ -13,7 +13,7 @@ function App() {
         sx={{
           display: 'flex',
           flexDirection: 'column',
-          minHeight: '0vh',
+          minHeight: '100vh',
         }}
       >
         <Header />
@@ -23,6 +23,8 @@ function App() {
             marginTop: 0, 
             marginLeft: -1,
             flexGrow: 1,
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
           <Routes>

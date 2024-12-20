@@ -1,4 +1,4 @@
-//firebaseDatabase.js
+// src/services/firebaseDatabase.js
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 

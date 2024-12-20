@@ -10,7 +10,7 @@ import "./Calendar.css";
 // Importamos las funciones de utilidad
 import { generateEvents, eventStyleGetter, dayPropGetter } from './CalendarUtils';
 import Recommendation from '../components/Recommendation';  // Ajusta la ruta según tu estructura de carpetas
-import { saveUserSelections } from '../services/mockDatabase';  // Ajusta la ruta según tu estructura de archivos
+import { saveUserSelections } from '../services/firebaseDatabase';  // Ajusta la ruta según tu estructura de archivos
 
 const locales = { es };
 
@@ -92,7 +92,9 @@ function Calendar() {
         alignItems: "center",
         width: "100vw",
         height: "auto",
-        padding: "1",
+        padding: "3px",
+        paddingTop: { xs: "20px", sm: "30px", md: "40px" },
+        paddingBottom: { xs: "3px", sm: "200px", md: "330px" },
         backgroundColor: "#e7f2f6",
       }}
     >

@@ -20,18 +20,25 @@ function Home() {
 
   const navigate = useNavigate();
 
-  const handleSubmit = () => {
-    if (!name || !calendarId) return; // Debe llenar ambos campos
+  const handleSubmit = async () => {
+    if (!name || !calendarId) return;
 
-    // Verificar si el calendario existe
-    if (!calendarExists(calendarId)) {
-      // Preguntar si desea crear
-      setIsCreatingCalendar(true);
-      setShowCreateDialog(true);
-    } else {
-      // Pedir contraseña para acceder
-      setIsCreatingCalendar(false);
-      setShowPasswordDialog(true);
+    try {
+      // Esperamos la respuesta de calendarExists
+      const exists = await calendarExists(calendarId);
+      
+      if (!exists) {
+        // Preguntar si desea crear
+        setIsCreatingCalendar(true);
+        setShowCreateDialog(true);
+      } else {
+        // Pedir contraseña para acceder
+        setIsCreatingCalendar(false);
+        setShowPasswordDialog(true);
+      }
+    } catch (error) {
+      console.error("Error al verificar el calendario:", error);
+      // Aquí podrías mostrar un mensaje de error al usuario
     }
   };
 
