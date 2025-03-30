@@ -14,6 +14,7 @@ export const calendarExists = async (calendarId) => {
   };
   
   export const createCalendar = async (calendarId, password) => {
+    console.log("📡 [createCalendar] Enviando datos:", calendarId, password);
     try {
       const res = await fetch('/api/create-calendar', {
         method: 'POST',
@@ -21,14 +22,16 @@ export const calendarExists = async (calendarId) => {
         body: JSON.stringify({ calendarId, password })
       });
       const data = await res.json();
+      console.log("📥 [createCalendar] Respuesta:", data);
       return data.ok;
     } catch (error) {
-      console.error("Error creando calendario:", error);
+      console.error("❌ Error creando calendario:", error);
       return false;
     }
   };
   
   export const checkCalendarPassword = async (calendarId, password) => {
+    console.log("📡 [checkPassword] Verificando:", calendarId, password);
     try {
       const res = await fetch('/api/check-password', {
         method: 'POST',
@@ -36,9 +39,10 @@ export const calendarExists = async (calendarId) => {
         body: JSON.stringify({ calendarId, password })
       });
       const data = await res.json();
+      console.log("📥 [checkPassword] Respuesta:", data);
       return data.ok;
     } catch (error) {
-      console.error("Error comprobando contraseña:", error);
+      console.error("❌ Error comprobando contraseña:", error);
       return false;
     }
   };

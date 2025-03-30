@@ -9,7 +9,7 @@ const selected = {
   firebase: firebaseDB,
   cloudflare: cloudflareDB
 }[mode];
-
+console.log("🧠 Modo de base de datos activo:", mode);
 export const {
   calendarExists,
   createCalendar,
