@@ -6,6 +6,7 @@
         "@emotion/react": "^11.13.5",
         "@emotion/styled": "^11.13.5",
         "@mui/material": "^5.14.0",
+        "calendario-quedadas": "file:",
         "date-fns": "^4.1.0",
         "express-rate-limit": "^7.5.0",
         "firebase": "^11.1.0",
