@@ -55,69 +55,34 @@ function Home() {
 
   const handlePasswordConfirm = async () => {
     if (isCreatingCalendar) {
-      // Estamos creando el calendario
       if (!password || !confirmPassword) return;
       if (password !== confirmPassword) {
         alert("Las contraseñas no coinciden.");
         return;
       }
-      /* Creamos el calendario
-      createCalendar(calendarId, password);
+  
+      const created = await createCalendar(calendarId, password);
+      if (!created) {
+        alert("Error al crear el calendario.");
+        return;
+      }
+  
       setShowPasswordDialog(false);
-      // Navegamos al calendario. Aquí podemos almacenar el nombre y userId.
       navigate(`/${calendarId}?name=${encodeURIComponent(name)}`);
-      */
-      // Creamos el calendario a través del Worker
-      fetch('/api/create-calendar', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          calendarId,
-          password
-        })
-      })
-      .then(async res => {
-        if (!res.ok) {
-          const error = await res.json();
-          console.error("❌ Error al crear calendario:", error);
-          alert("Error al crear calendario.");
-          return;
-        }
-        setShowPasswordDialog(false);
-        navigate(`/${calendarId}?name=${encodeURIComponent(name)}`);
-      })
-      .catch(err => {
-        console.error("❌ Error al conectar con el Worker:", err);
-        alert("Error de red al crear calendario.");
-      });
-
     } else {
-      // Estamos accediendo a un calendario existente
       if (!password) return;
-      //const valid = checkCalendarPassword(calendarId, password);
-      const res = await fetch('/api/check-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ calendarId, password })
-      });
-      const data = await res.json();
-      const valid = data.ok;
-      
+  
+      const valid = await checkCalendarPassword(calendarId, password);
       if (!valid) {
-        // Contraseña incorrecta
         setShowPasswordDialog(false);
         setShowErrorDialog(true);
       } else {
         setShowPasswordDialog(false);
-        // Contraseña correcta, navegamos
         navigate(`/${calendarId}?name=${encodeURIComponent(name)}`);
       }
     }
   };
+  
 
   const handleCloseError = () => {
     setShowErrorDialog(false);
