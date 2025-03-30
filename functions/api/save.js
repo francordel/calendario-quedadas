@@ -14,7 +14,6 @@ export async function onRequestPost({ request, env }) {
   
       const url = `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents/calendarios/${calendarId}?key=${FIREBASE_API_KEY}`;
   
-      // Obtener calendario actual
       const res = await fetch(url);
       if (!res.ok) {
         return new Response(JSON.stringify({ ok: false, error: "Calendario no encontrado" }), {
@@ -24,6 +23,7 @@ export async function onRequestPost({ request, env }) {
       }
   
       const doc = await res.json();
+  
       const users = doc.fields?.users?.arrayValue?.values || [];
   
       let updatedUsers = [];
@@ -106,7 +106,7 @@ export async function onRequestPost({ request, env }) {
         },
         body: JSON.stringify({
           fields: {
-            password: doc.fields.password,
+            password: doc.fields.password || { stringValue: "" }, // fallback por si se borra accidentalmente
             users: {
               arrayValue: {
                 values: updatedUsers
@@ -117,14 +117,14 @@ export async function onRequestPost({ request, env }) {
       });
   
       if (!patchRes.ok) {
-        const error = await patchRes.json();
-        return new Response(JSON.stringify({ ok: false, error }), {
+        let errorText = await patchRes.text();
+        return new Response(JSON.stringify({ ok: false, error: errorText }), {
           status: patchRes.status,
           headers: { "Content-Type": "application/json" }
         });
       }
   
-      return new Response(JSON.stringify({ ok: true }), {
+      return new Response(JSON.stringify({ ok: true, totalUsers: updatedUsers.length }), {
         status: 200,
         headers: { "Content-Type": "application/json" }
       });
@@ -136,4 +136,5 @@ export async function onRequestPost({ request, env }) {
       });
     }
   }
+  
   
