@@ -6,16 +6,14 @@ import { calendarExists, createCalendar, checkCalendarPassword } from "../servic
 function Home() {
   const [name, setName] = useState("");
   const [calendarId, setCalendarId] = useState("");
-  
-  // Estados para diálogos
+
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  
-  // Para distinguir si la contraseña es para crear o para acceder
+
   const [isCreatingCalendar, setIsCreatingCalendar] = useState(false);
 
   const navigate = useNavigate();
@@ -24,28 +22,21 @@ function Home() {
     if (!name || !calendarId) return;
 
     try {
-      // Esperamos la respuesta de calendarExists
       const exists = await calendarExists(calendarId);
-      
       if (!exists) {
-        // Preguntar si desea crear
         setIsCreatingCalendar(true);
         setShowCreateDialog(true);
       } else {
-        // Pedir contraseña para acceder
         setIsCreatingCalendar(false);
         setShowPasswordDialog(true);
       }
     } catch (error) {
       console.error("Error al verificar el calendario:", error);
-      // Aquí podrías mostrar un mensaje de error al usuario
     }
   };
 
   const handleCreateCalendar = () => {
-    // Aquí ya está abierto el diálogo de confirmación para crear
-    setShowCreateDialog(false); 
-    // Ahora pediremos la contraseña para crear
+    setShowCreateDialog(false);
     setShowPasswordDialog(true);
   };
 
@@ -60,18 +51,18 @@ function Home() {
         alert("Las contraseñas no coinciden.");
         return;
       }
-  
+
       const created = await createCalendar(calendarId, password);
       if (!created) {
         alert("Error al crear el calendario.");
         return;
       }
-  
+
       setShowPasswordDialog(false);
       navigate(`/${calendarId}?name=${encodeURIComponent(name)}`);
     } else {
       if (!password) return;
-  
+
       const valid = await checkCalendarPassword(calendarId, password);
       if (!valid) {
         setShowPasswordDialog(false);
@@ -82,25 +73,21 @@ function Home() {
       }
     }
   };
-  
 
   const handleCloseError = () => {
     setShowErrorDialog(false);
   };
 
   return (
-    <Box
-      sx={{
-        height: "100vh",
-        width: "99.9vw",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      {/* Fondo con imagen */}
+    <Box sx={{
+      height: "100vh",
+      width: "99.9vw",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      position: "relative",
+      overflow: "hidden",
+    }}>
       <Box
         sx={{
           position: "absolute",
@@ -117,7 +104,6 @@ function Home() {
         }}
       />
 
-      {/* Formulario */}
       <Box
         display="flex"
         flexDirection="column"
@@ -164,7 +150,6 @@ function Home() {
         </Button>
       </Box>
 
-      {/* Diálogo para preguntar si se desea crear el calendario */}
       <Dialog open={showCreateDialog} onClose={handleCancelCreate}>
         <DialogTitle>El calendario no existe</DialogTitle>
         <DialogContent>
@@ -178,7 +163,6 @@ function Home() {
         </DialogActions>
       </Dialog>
 
-      {/* Diálogo para pedir la contraseña */}
       <Dialog open={showPasswordDialog} onClose={() => setShowPasswordDialog(false)}>
         <DialogTitle>
           {isCreatingCalendar ? "Crea tu calendario" : "Introduce la contraseña"}
@@ -223,7 +207,6 @@ function Home() {
         </DialogActions>
       </Dialog>
 
-      {/* Diálogo de error de contraseña */}
       <Dialog open={showErrorDialog} onClose={handleCloseError}>
         <DialogTitle>Error</DialogTitle>
         <DialogContent>
@@ -242,3 +225,4 @@ function Home() {
 }
 
 export default Home;
+
