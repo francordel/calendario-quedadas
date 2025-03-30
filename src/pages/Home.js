@@ -53,7 +53,7 @@ function Home() {
     setShowCreateDialog(false);
   };
 
-  const handlePasswordConfirm = () => {
+  const handlePasswordConfirm = async () => {
     if (isCreatingCalendar) {
       // Estamos creando el calendario
       if (!password || !confirmPassword) return;
@@ -96,7 +96,17 @@ function Home() {
     } else {
       // Estamos accediendo a un calendario existente
       if (!password) return;
-      const valid = checkCalendarPassword(calendarId, password);
+      //const valid = checkCalendarPassword(calendarId, password);
+      const res = await fetch('/api/check-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ calendarId, password })
+      });
+      const data = await res.json();
+      const valid = data.ok;
+      
       if (!valid) {
         // Contraseña incorrecta
         setShowPasswordDialog(false);
