@@ -14,6 +14,7 @@ export const calendarExists = async (calendarId) => {
   };
   
   export const createCalendar = async (calendarId, password) => {
+    alert("✅ Cloudflare createCalendar activo");
     console.log("📡 [createCalendar] Enviando datos:", calendarId, password);
     try {
       const res = await fetch('/api/create-calendar', {
