@@ -27,7 +27,11 @@ export async function onRequest({ request, env }) {
       const res = await fetch(url);
   
       if (!res.ok) {
-        return new Response(JSON.stringify([]), {
+        return new Response(JSON.stringify({
+          ok: true,
+          exists: false,
+          users: []
+        }), {
           status: 200,
           headers: { "Content-Type": "application/json" }
         });
@@ -50,7 +54,11 @@ export async function onRequest({ request, env }) {
         };
       });
   
-      return new Response(JSON.stringify(parsedUsers), {
+      return new Response(JSON.stringify({
+        ok: true,
+        exists: true,
+        users: parsedUsers
+      }), {
         status: 200,
         headers: { "Content-Type": "application/json" }
       });

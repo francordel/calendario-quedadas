@@ -5,6 +5,7 @@ import { db } from "./firebaseConfig";
 export const calendarExists = async (calendarId) => {
   const docRef = doc(db, "calendarios", calendarId);
   const docSnap = await getDoc(docRef);
+  console.log("🔍 Existe el calendario", calendarId, ":", docSnap.exists());
   return docSnap.exists();
 };
 
@@ -29,6 +30,7 @@ export const fetchCalendarSelections = async (calendarId) => {
   const docSnap = await getDoc(docRef);
   if (!docSnap.exists()) return [];
   const data = docSnap.data();
+  console.log("📤 Datos recibidos del calendario:", data);
   return data.users || [];
 };
 
@@ -50,7 +52,7 @@ export const saveUserSelections = async (userId, calendarId, selectedDays) => {
     users.push({ userId, selectedDays });
   }
 
-  await updateDoc(docRef, { users: users });
+  console.log("👤 Guardando usuarios actualizados:", users);
+  await setDoc(docRef, { users }, { merge: true });
   return true;
 };
-
