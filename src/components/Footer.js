@@ -20,7 +20,7 @@ function Footer() {
         >
           Descarga{" "}
           <a
-            href="https://play.google.com/store/apps/details?id=com.francortes.analizame&hl=es"
+            href="https://misintaxis5.wordpress.com"
             target="_blank"
             rel="noopener noreferrer"
             style={{ color: "white", textDecoration: "underline" }}
