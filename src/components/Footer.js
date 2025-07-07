@@ -7,7 +7,8 @@ import {
   Button, 
   Box, 
   Stack, 
-  Divider
+  Divider,
+  Avatar
 } from '@mui/material';
 import {
   Email as EmailIcon,
@@ -62,11 +63,50 @@ function Footer() {
               sx={{
                 color: 'text.secondary',
                 fontWeight: 500,
-                fontSize: { xs: '0.75rem', md: '0.875rem' }
+                fontSize: { xs: '0.75rem', md: '0.875rem' },
+                mr: 0.5
               }}
             >
               {t('by')}
             </Typography>
+            <Stack 
+              direction="row" 
+              alignItems="center" 
+              spacing={0.5}
+              component="a"
+              href="https://francordel.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{
+                textDecoration: 'none',
+                cursor: 'pointer',
+                '&:hover': {
+                  opacity: 0.8,
+                },
+                transition: 'opacity 0.2s ease'
+              }}
+            >
+              <Avatar
+                alt="Fran Cortés"
+                src="/images/FranCortes2.jpeg"
+                sx={{ 
+                  width: { xs: 20, md: 24 }, 
+                  height: { xs: 20, md: 24 },
+                  border: 1,
+                  borderColor: 'divider'
+                }}
+              />
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'text.secondary',
+                  fontWeight: 500,
+                  fontSize: { xs: '0.75rem', md: '0.875rem' }
+                }}
+              >
+                Fran Cortés-Delgado
+              </Typography>
+            </Stack>
           </Stack>
 
           <Box sx={{ flex: 1 }} />
