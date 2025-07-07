@@ -124,40 +124,13 @@ function Calendar() {
   };
 
   // Enhanced date selection handling for all devices
-  const handleDateClick = useCallback((event) => {
-    // Handle both mobile and desktop clicks
-    event.preventDefault();
-    const clickedElement = event.target.closest('.rbc-date-cell');
-    if (clickedElement) {
-      const dateButton = clickedElement.querySelector('.rbc-button-link');
-      if (dateButton) {
-        const dateText = dateButton.textContent;
-        const currentMonth = new Date().getMonth();
-        const currentYear = new Date().getFullYear();
-        const selectedDate = new Date(currentYear, currentMonth, parseInt(dateText));
-        
-        const today = new Date().setHours(0, 0, 0, 0);
-        if (selectedDate >= today) {
-          setPopupDate(selectedDate);
-          setOpenDialog(true);
-        }
-      }
+  const handleDateClick = useCallback((date) => {
+    const today = new Date().setHours(0, 0, 0, 0);
+    if (date >= today) {
+      setPopupDate(date);
+      setOpenDialog(true);
     }
   }, []);
-
-  useEffect(() => {
-    // Add both click and touch event listeners for universal compatibility
-    const calendarElement = document.querySelector('.rbc-calendar');
-    if (calendarElement) {
-      calendarElement.addEventListener('click', handleDateClick);
-      calendarElement.addEventListener('touchend', handleDateClick);
-      
-      return () => {
-        calendarElement.removeEventListener('click', handleDateClick);
-        calendarElement.removeEventListener('touchend', handleDateClick);
-      };
-    }
-  }, [handleDateClick]);
 
   const handleDialogClose = () => {
     setPopupDate(null);
@@ -600,21 +573,35 @@ function Calendar() {
                 return (
                   <Box className="calendar-month-nav" sx={{ p: 3 }}>
                     <IconButton
-                      onClick={() => props.onNavigate("PREV")}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        props.onNavigate("PREV");
+                      }}
+                      onTouchEnd={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        props.onNavigate("PREV");
+                      }}
                       sx={{
-                        width: 44,
-                        height: 44,
+                        width: { xs: 48, md: 44 },
+                        height: { xs: 48, md: 44 },
                         borderRadius: 3,
                         backgroundColor: 'background.paper',
                         border: 1,
                         borderColor: 'divider',
                         color: 'text.primary',
+                        touchAction: 'manipulation',
+                        userSelect: 'none',
                         '&:hover': {
                           backgroundColor: 'action.hover',
                           borderColor: 'text.secondary',
                         },
                         '&:active': {
                           transform: 'scale(0.95)',
+                        },
+                        '&:focus': {
+                          outline: 'none',
                         },
                       }}
                     >
@@ -639,21 +626,35 @@ function Calendar() {
                     </Typography>
 
                     <IconButton
-                      onClick={() => props.onNavigate("NEXT")}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        props.onNavigate("NEXT");
+                      }}
+                      onTouchEnd={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        props.onNavigate("NEXT");
+                      }}
                       sx={{
-                        width: 44,
-                        height: 44,
+                        width: { xs: 48, md: 44 },
+                        height: { xs: 48, md: 44 },
                         borderRadius: 3,
                         backgroundColor: 'background.paper',
                         border: 1,
                         borderColor: 'divider',
                         color: 'text.primary',
+                        touchAction: 'manipulation',
+                        userSelect: 'none',
                         '&:hover': {
                           backgroundColor: 'action.hover',
                           borderColor: 'text.secondary',
                         },
                         '&:active': {
                           transform: 'scale(0.95)',
+                        },
+                        '&:focus': {
+                          outline: 'none',
                         },
                       }}
                     >
