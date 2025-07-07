@@ -1,16 +1,337 @@
+/* Premium Calendar Design - World-Class Styling */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Root Variables for Design System */
+:root {
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  --danger-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  
+  --glass-bg: rgba(255, 255, 255, 0.25);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --shadow-soft: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  --shadow-hover: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  
+  --text-primary: #2d3748;
+  --text-secondary: #4a5568;
+  --text-muted: #718096;
+  --border-radius: 16px;
+  --border-radius-lg: 24px;
+  --spacing-unit: 8px;
+}
+
+/* Calendar Container - Premium Glass Morphism */
 .rbc-calendar {
-  background-color: #ffffff;
-  border-radius: 16px;
-  padding: 10px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-soft);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.rbc-calendar:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Header Styling */
+.rbc-header {
+  background: linear-gradient(145deg, #f8fafc, #e2e8f0);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  padding: 16px 0;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+}
+
+.rbc-header::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 3px;
+  background: var(--primary-gradient);
+  border-radius: 2px;
+}
+
+/* Today's Date - Special Highlighting */
 .rbc-today {
-  background-color: #fcedfe !important; /* Malva pastel para el día actual */
+  background: linear-gradient(135deg, #667eea20, #764ba220) !important;
+  border: 2px solid #667eea;
+  position: relative;
+  overflow: hidden;
 }
 
+.rbc-today::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--primary-gradient);
+  animation: shimmer 2s ease-in-out infinite alternate;
+}
+
+@keyframes shimmer {
+  from { opacity: 0.5; }
+  to { opacity: 1; }
+}
+
+/* Date Cells - Sophisticated Hover Effects */
+.rbc-date-cell {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.rbc-date-cell:hover {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+  transform: scale(1.02);
+}
+
+.rbc-date-cell:hover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Date Button Styling */
+.rbc-button-link {
+  color: var(--text-primary);
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+  padding: 8px;
+  position: relative;
+}
+
+.rbc-button-link:hover {
+  color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+  text-decoration: none;
+}
+
+/* Event Styling - Premium Look */
 .rbc-event {
-  text-align: center;
-  font-size: 12px;
-  font-weight: bold;
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 6px 12px !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  text-align: center !important;
+  color: white !important;
+  position: relative !important;
+  overflow: hidden !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
 }
 
+.rbc-event:hover {
+  transform: translateY(-2px) scale(1.05) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25) !important;
+}
+
+.rbc-event::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.6s ease;
+}
+
+.rbc-event:hover::before {
+  left: 100%;
+}
+
+/* Event Colors - Premium Gradients */
+.rbc-event.event-green {
+  background: var(--success-gradient) !important;
+}
+
+.rbc-event.event-red {
+  background: var(--danger-gradient) !important;
+}
+
+.rbc-event.event-orange {
+  background: var(--warning-gradient) !important;
+}
+
+/* Past Days Styling - Elegant Disabled State */
+.rbc-date-cell.past-day {
+  background: linear-gradient(145deg, #f1f5f9, #e2e8f0) !important;
+  color: #94a3b8 !important;
+  position: relative;
+}
+
+.rbc-date-cell.past-day::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 2px,
+    rgba(148, 163, 184, 0.1) 2px,
+    rgba(148, 163, 184, 0.1) 4px
+  );
+  pointer-events: none;
+}
+
+/* Month View Specific */
+.rbc-month-view {
+  border: none;
+  background: transparent;
+}
+
+.rbc-month-row {
+  border: none;
+  margin-bottom: 2px;
+}
+
+.rbc-day-bg {
+  border: 1px solid rgba(226, 232, 240, 0.5);
+  transition: all 0.2s ease;
+}
+
+.rbc-day-bg:hover {
+  border-color: rgba(102, 126, 234, 0.3);
+  background: rgba(102, 126, 234, 0.02);
+}
+
+/* Off Range (Other Month) Days */
+.rbc-off-range {
+  color: #cbd5e0;
+  background: rgba(248, 250, 252, 0.5);
+}
+
+.rbc-off-range-bg {
+  background: rgba(248, 250, 252, 0.8);
+}
+
+/* Weekend Styling */
+.rbc-date-cell:nth-child(7),
+.rbc-date-cell:nth-child(1) {
+  background: linear-gradient(145deg, rgba(252, 165, 165, 0.05), rgba(254, 202, 202, 0.05));
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .rbc-calendar {
+    border-radius: var(--border-radius);
+    margin: 0 8px;
+  }
+  
+  .rbc-header {
+    padding: 12px 0;
+    font-size: 12px;
+  }
+  
+  .rbc-event {
+    font-size: 10px !important;
+    padding: 4px 8px !important;
+  }
+  
+  .rbc-button-link {
+    padding: 6px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .rbc-event {
+    font-size: 9px !important;
+    padding: 3px 6px !important;
+    border-radius: 8px !important;
+  }
+}
+
+/* Custom Scrollbar */
+.rbc-calendar *::-webkit-scrollbar {
+  width: 6px;
+}
+
+.rbc-calendar *::-webkit-scrollbar-track {
+  background: rgba(241, 245, 249, 0.5);
+  border-radius: 3px;
+}
+
+.rbc-calendar *::-webkit-scrollbar-thumb {
+  background: var(--primary-gradient);
+  border-radius: 3px;
+}
+
+.rbc-calendar *::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+}
+
+/* Loading Animation */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.calendar-loading .rbc-date-cell {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Accessibility Improvements */
+.rbc-calendar:focus-within {
+  outline: 3px solid rgba(102, 126, 234, 0.3);
+  outline-offset: 2px;
+}
+
+.rbc-event:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .rbc-calendar {
+    border: 2px solid #000;
+    background: #fff;
+  }
+  
+  .rbc-event {
+    border: 2px solid #000 !important;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .rbc-calendar,
+  .rbc-date-cell,
+  .rbc-event,
+  .rbc-button-link {
+    transition: none !important;
+    animation: none !important;
+  }
+}
