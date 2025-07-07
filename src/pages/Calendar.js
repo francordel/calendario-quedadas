@@ -535,12 +535,14 @@ function Calendar() {
                       sx={{
                         fontSize: '20px',
                         fontWeight: 600,
-                        color: (theme) => theme.palette.text.primary + ' !important',
+                        color: 'black',
                         margin: 0,
                         textAlign: 'center',
                         fontFamily: "'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
                         position: 'relative',
                         zIndex: 1000,
+                        textShadow: 'none',
+                        background: 'transparent',
                       }}
                     >
                       {props.label}
