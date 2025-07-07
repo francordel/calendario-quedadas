@@ -490,7 +490,7 @@ function Calendar() {
                         sx={{ 
                           fontSize: { xs: '14px', md: '16px' },
                           fontWeight: 500,
-                          color: 'text.primary',
+                          color: 'black',
                           mb: 0.5
                         }}
                       >
@@ -625,7 +625,7 @@ function Calendar() {
                       sx={{
                         fontSize: '20px',
                         fontWeight: 600,
-                        color: isDark ? '#FFFFFF' : '#1C1C1E',
+                        color: 'black',
                         margin: 0,
                         textAlign: 'center',
                         fontFamily: "'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
