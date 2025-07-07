@@ -79,7 +79,7 @@ function Header() {
                 fontFamily: "'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
               }}
             >
-              Calendario de Quedadas
+              Kdemos
             </Typography>
           </Box>
 
