@@ -232,7 +232,7 @@ function Header() {
           </Stack>
 
           {/* Mobile Navigation */}
-          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+          <Stack direction="row" spacing={1} sx={{ display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               onClick={() => navigate('/')}
               sx={{
@@ -242,7 +242,23 @@ function Header() {
             >
               <HomeIcon />
             </IconButton>
-          </Box>
+            
+            {/* Mobile Theme Toggle */}
+            <IconButton
+              onClick={toggleMode}
+              sx={{
+                color: 'text.secondary',
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 122, 255, 0.04)',
+                  color: 'primary.main',
+                },
+                width: 36,
+                height: 36,
+              }}
+            >
+              {isDark ? <LightModeIcon sx={{ fontSize: 18 }} /> : <DarkModeIcon sx={{ fontSize: 18 }} />}
+            </IconButton>
+          </Stack>
         </Stack>
 
         {/* Version Badge */}

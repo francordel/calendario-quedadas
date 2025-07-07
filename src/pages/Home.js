@@ -222,7 +222,7 @@ function Home() {
               sx={{
                 fontSize: { xs: "2.5rem", md: "3.5rem", lg: "4rem" },
                 fontWeight: 700,
-                color: "#1C1C1E",
+                color: "text.primary",
                 lineHeight: 1.1,
                 mb: 2,
                 letterSpacing: "-0.02em",
