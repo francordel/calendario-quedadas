@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 import { 
   AppBar, 
   Toolbar, 
@@ -15,15 +16,15 @@ import {
 } from '@mui/icons-material';
 
 function Footer() {
+  const { t } = useLanguage();
   return (
     <AppBar 
       position="static" 
       elevation={0}
       sx={{ 
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(20px)',
-        borderTop: '1px solid #E5E5EA',
-        color: '#1C1C1E',
+        borderTop: 1,
+        borderColor: 'divider',
         mt: 4,
       }}
     >
@@ -48,23 +49,23 @@ function Footer() {
             <Typography
               variant="body2"
               sx={{
-                color: '#8E8E93',
+                color: 'text.secondary',
                 fontWeight: 500,
                 fontSize: { xs: '0.75rem', md: '0.875rem' }
               }}
             >
-              Hecho con
+              {t('madeWith')}
             </Typography>
             <FavoriteIcon sx={{ color: '#FF3B30', fontSize: { xs: 14, md: 16 } }} />
             <Typography
               variant="body2"
               sx={{
-                color: '#8E8E93',
+                color: 'text.secondary',
                 fontWeight: 500,
                 fontSize: { xs: '0.75rem', md: '0.875rem' }
               }}
             >
-              por Fran Cortés-Delgado
+              {t('by')}
             </Typography>
           </Stack>
 
@@ -75,7 +76,7 @@ function Footer() {
             <Typography
               variant="body2"
               sx={{
-                color: '#8E8E93',
+                color: 'text.secondary',
                 fontSize: '0.875rem',
                 fontWeight: 500,
                 display: 'flex',
@@ -83,7 +84,7 @@ function Footer() {
                 gap: 0.5,
               }}
             >
-              ¿Tu empresa quiere publicitarse aquí?
+              {t('advertising')}
               <Typography
                 component="a"
                 href="https://misintaxis5.wordpress.com"
@@ -105,16 +106,16 @@ function Footer() {
               </Typography>
             </Typography>
 
-            <Divider orientation="vertical" flexItem sx={{ borderColor: '#E5E5EA' }} />
+            <Divider orientation="vertical" flexItem sx={{ borderColor: 'divider' }} />
 
             <Typography
               variant="body2"
               sx={{
-                color: '#C7C7CC',
+                color: 'text.disabled',
                 fontSize: '0.875rem'
               }}
             >
-              © 2024 Calendario de Quedadas
+              {t('copyright')}
             </Typography>
           </Stack>
 
@@ -123,8 +124,9 @@ function Footer() {
             href="mailto:fran.j.cordel@gmail.com"
             startIcon={<EmailIcon sx={{ fontSize: { xs: 16, md: 18 } }} />}
             sx={{
-              color: '#007AFF',
-              border: '1px solid #007AFF',
+              color: 'primary.main',
+              border: 1,
+              borderColor: 'primary.main',
               borderRadius: 1.5,
               fontSize: { xs: '0.75rem', md: '0.875rem' },
               fontWeight: 500,
@@ -134,11 +136,11 @@ function Footer() {
               minWidth: { xs: 'auto', md: 'auto' },
               '&:hover': {
                 backgroundColor: 'rgba(0, 122, 255, 0.04)',
-                borderColor: '#0056CC'
+                borderColor: 'primary.dark'
               }
             }}
           >
-            Contacto
+            {t('contact')}
           </Button>
         </Stack>
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useLanguage } from "../contexts/LanguageContext";
 import { Calendar as BigCalendar, dateFnsLocalizer } from "react-big-calendar";
 import { es } from "date-fns/locale";
 import { format, parse, startOfWeek, getDay } from "date-fns";
@@ -53,6 +54,7 @@ const localizer = dateFnsLocalizer({
 });
 
 function Calendar() {
+  const { t } = useLanguage();
   const { calendarId } = useParams();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -239,7 +241,7 @@ function Calendar() {
   };
 
   const getShareMessage = () => {
-    return `¡Te invito a coordinar nuestra reunión! 📅\n\nÚnete al calendario "${calendarId}" para elegir las fechas que mejor te vayan.\n\n${getShareableLink()}\n\n¡Es súper fácil y rápido! 🚀`;
+    return `${t('shareMessage')}\n\n${t('joinCalendar')} "${calendarId}" ${t('shareMessageEnd')}\n\n${getShareableLink()}`;
   };
 
   const copyToClipboard = async () => {
@@ -290,7 +292,7 @@ function Calendar() {
 
   const handleNameSubmit = async () => {
     if (!tempUserName.trim()) {
-      setNameError('Por favor, introduce tu nombre');
+      setNameError(t('enterName'));
       return;
     }
 
@@ -313,7 +315,7 @@ function Calendar() {
       setShowNameDialog(false);
     } catch (error) {
       console.error('Error checking user:', error);
-      setNameError('Error al acceder al calendario');
+      setNameError(t('errorCheckingCalendar'));
     } finally {
       setIsLoading(false);
     }
@@ -355,7 +357,7 @@ function Calendar() {
               }}
             >
               <HomeIcon sx={{ fontSize: 16 }} />
-              Inicio
+              {t('home')}
             </Link>
             <Typography color="text.primary" variant="body2">
               {calendarId}
@@ -380,13 +382,11 @@ function Calendar() {
               <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
                 <PersonIcon sx={{ fontSize: 16, color: "#8E8E93" }} />
                 <Typography variant="body2" color="#8E8E93">
-                  {userName} • Paso {step} de 2
+                  {userName} • {t('step')} {step} {t('stepOf')} 2
                 </Typography>
               </Stack>
               <Typography variant="body1" color="#616161" sx={{ maxWidth: 600 }}>
-                {step === 1 
-                  ? "Selecciona tu disponibilidad haciendo clic en cada día. En móvil, simplemente toca el día." 
-                  : "Revisa tus selecciones y finaliza cuando estés conforme."}
+                {step === 1 ? t('stepOneDesc') : t('stepTwoDesc')}
               </Typography>
             </Box>
 
@@ -429,7 +429,7 @@ function Calendar() {
           <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mt: 2 }}>
             <Chip
               icon={<CheckIcon sx={{ fontSize: 16 }} />}
-              label={`Disponible (${counts.available})`}
+              label={`${t('available')} (${counts.available})`}
               size="small"
               sx={{
                 backgroundColor: "#D4EDDA",
@@ -440,7 +440,7 @@ function Calendar() {
             />
             <Chip
               icon={<HelpIcon sx={{ fontSize: 16 }} />}
-              label={`Quizás (${counts.maybe})`}
+              label={`${t('maybe')} (${counts.maybe})`}
               size="small"
               sx={{
                 backgroundColor: "#FFF3CD",
@@ -451,7 +451,7 @@ function Calendar() {
             />
             <Chip
               icon={<CancelIcon sx={{ fontSize: 16 }} />}
-              label={`No disponible (${counts.unavailable})`}
+              label={`${t('notAvailable')} (${counts.unavailable})`}
               size="small"
               sx={{
                 backgroundColor: "#F8D7DA",
@@ -556,7 +556,7 @@ function Calendar() {
                 },
               }}
             >
-              {step === 1 ? "Volver al inicio" : "Paso anterior"}
+              {step === 1 ? t('backToHome') : t('previousStep')}
             </Button>
             
             <Button
@@ -581,7 +581,7 @@ function Calendar() {
                 },
               }}
             >
-              {isLoading ? "Guardando..." : step === 1 ? "Continuar" : "Finalizar"}
+              {isLoading ? t('saving') : step === 1 ? t('continue') : t('finish')}
             </Button>
           </Stack>
         </Paper>
@@ -631,7 +631,7 @@ function Calendar() {
                   },
                 }}
               >
-                Disponible
+                {t('available')}
               </Button>
               
               <Button 
@@ -650,7 +650,7 @@ function Calendar() {
                   },
                 }}
               >
-                Quizás
+                {t('maybe')}
               </Button>
               
               <Button 
@@ -669,7 +669,7 @@ function Calendar() {
                   },
                 }}
               >
-                No disponible
+                {t('notAvailable')}
               </Button>
             </Stack>
           </DialogContent>
@@ -684,7 +684,7 @@ function Calendar() {
                 "&:hover": { backgroundColor: "rgba(0,0,0,0.04)" }
               }}
             >
-              Cancelar
+              {t('cancel')}
             </Button>
           </DialogActions>
         </Dialog>
@@ -710,7 +710,7 @@ function Calendar() {
             pt: 4,
           }}>
             <Typography variant="h5" fontWeight={700} sx={{ mb: 1 }}>
-              ¡Bienvenido al calendario!
+              {t('welcomeToCalendar')}
             </Typography>
             <Typography variant="body2" color="#8E8E93">
               {calendarId}
@@ -719,11 +719,11 @@ function Calendar() {
           
           <DialogContent sx={{ pt: 2, pb: 2 }}>
             <Typography variant="body1" color="#1C1C1E" textAlign="center" sx={{ mb: 3 }}>
-              Para comenzar, por favor introduce tu nombre
+              {t('enterNameToStart')}
             </Typography>
             
             <TextField
-              label="Tu nombre"
+              label={t('yourName')}
               value={tempUserName}
               onChange={(e) => {
                 setTempUserName(e.target.value);
@@ -754,7 +754,7 @@ function Calendar() {
             />
             
             <Typography variant="body2" color="#8E8E93" textAlign="center" sx={{ mt: 2 }}>
-              💡 Si ya has participado antes, recuperaremos tus selecciones automáticamente
+              {t('autoRecover')}
             </Typography>
           </DialogContent>
           
@@ -779,7 +779,7 @@ function Calendar() {
                 },
               }}
             >
-              {isLoading ? "Accediendo..." : "Continuar"}
+              {isLoading ? t('accessing') : t('continue')}
             </Button>
           </DialogActions>
         </Dialog>
@@ -805,10 +805,10 @@ function Calendar() {
             pt: 4,
           }}>
             <Typography variant="h5" fontWeight={700} sx={{ mb: 1 }}>
-              ¡Comparte el calendario!
+              {t('shareCalendar')}
             </Typography>
             <Typography variant="body2" color="#8E8E93">
-              Invita a más personas a participar
+              {t('shareCalendarDesc')}
             </Typography>
           </DialogTitle>
           
@@ -825,7 +825,7 @@ function Calendar() {
               }}
             >
               <Typography variant="body2" sx={{ color: "#007AFF", mb: 1, fontWeight: 500 }}>
-                Enlace del calendario
+                {t('calendarLink')}
               </Typography>
               <Typography 
                 variant="body1" 
@@ -904,11 +904,11 @@ function Calendar() {
             </Paper>
             
             <Typography variant="body2" color="#8E8E93" textAlign="center" sx={{ mb: 2 }}>
-              Comparte este enlace para que otros se unan al calendario
+              {t('shareInstructions')}
             </Typography>
             
             <Typography variant="body2" color="#616161" textAlign="center" sx={{ fontSize: "0.8rem" }}>
-              💡 En móvil, los iconos abrirán las aplicaciones correspondientes
+              {t('mobileAppsHint')}
             </Typography>
           </DialogContent>
           
@@ -929,7 +929,7 @@ function Calendar() {
                 },
               }}
             >
-              Cerrar
+              {t('close')}
             </Button>
           </DialogActions>
         </Dialog>

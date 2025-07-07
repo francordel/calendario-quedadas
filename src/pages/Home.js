@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../contexts/LanguageContext";
 import { 
   TextField, 
   Button, 
@@ -30,6 +31,7 @@ import {
 import { calendarExists, createCalendar, generateUniqueCalendarId } from "../services";
 
 function Home() {
+  const { t } = useLanguage();
   const [name, setName] = useState("");
   const [calendarId, setCalendarId] = useState("");
 
@@ -54,7 +56,7 @@ function Home() {
 
   const handleCreateCalendarSubmit = async () => {
     if (!name.trim()) {
-      setErrorMessage("Por favor, introduce tu nombre");
+      setErrorMessage(t('enterName'));
       return;
     }
 
@@ -66,7 +68,7 @@ function Home() {
       const idResult = await generateUniqueCalendarId();
       
       if (!idResult.success) {
-        setErrorMessage(idResult.error || "Error al generar ID único");
+        setErrorMessage(idResult.error || t('errorCreatingCalendar'));
         setIsLoading(false);
         return;
       }
@@ -75,7 +77,7 @@ function Home() {
       const createResult = await createCalendar(idResult.calendarId);
       
       if (!createResult.success) {
-        setErrorMessage(createResult.error || "Error al crear el calendario");
+        setErrorMessage(createResult.error || t('errorCreatingCalendar'));
         setIsLoading(false);
         return;
       }
@@ -88,14 +90,14 @@ function Home() {
 
     } catch (error) {
       console.error("Error creating calendar:", error);
-      setErrorMessage("Error inesperado al crear el calendario");
+      setErrorMessage(t('errorUnexpected'));
       setIsLoading(false);
     }
   };
 
   const handleLoginSubmit = async () => {
     if (!name.trim() || !calendarId.trim()) {
-      setErrorMessage("Por favor, introduce tu nombre y el ID del calendario");
+      setErrorMessage(t('enterNameAndId'));
       return;
     }
 
@@ -105,7 +107,7 @@ function Home() {
     try {
       const exists = await calendarExists(calendarId);
       if (!exists) {
-        setErrorMessage("El calendario no existe. Verifica el ID o crea un nuevo calendario.");
+        setErrorMessage(t('calendarNotExists'));
         setIsLoading(false);
         return;
       }
@@ -114,7 +116,7 @@ function Home() {
       navigate(`/${calendarId}?name=${encodeURIComponent(name)}`);
     } catch (error) {
       console.error("Error checking calendar:", error);
-      setErrorMessage("Error al verificar el calendario");
+      setErrorMessage(t('errorCheckingCalendar'));
       setIsLoading(false);
     }
   };
@@ -143,7 +145,7 @@ function Home() {
   };
 
   const getShareMessage = () => {
-    return `¡Te invito a coordinar nuestra reunión! 📅\n\nÚnete al calendario "${generatedCalendarId}" para elegir las fechas que mejor te vayan.\n\n${getShareableLink()}\n\n¡Es súper fácil y rápido! 🚀`;
+    return `${t('shareMessage')} ${generatedCalendarId} ${t('shareMessageEnd')}\n\n${getShareableLink()}`;
   };
 
   const copyToClipboard = async () => {
@@ -181,8 +183,8 @@ function Home() {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Calendario de Quedadas',
-          text: 'Te invito a coordinar nuestra reunión',
+          title: t('appTitle'),
+          text: t('shareMessage'),
           url: getShareableLink(),
         });
       } catch (err) {
@@ -226,7 +228,7 @@ function Home() {
                 letterSpacing: "-0.02em",
               }}
             >
-              Calendario de Quedadas
+              {t('appTitle')}
             </Typography>
             
             <Typography
@@ -241,8 +243,7 @@ function Home() {
                 mb: 6,
               }}
             >
-              Coordina reuniones de manera eficiente. Simplifica la organización de eventos 
-              compartiendo disponibilidades con tu equipo.
+              {t('appSubtitle')}
             </Typography>
           </Box>
 
@@ -275,7 +276,7 @@ function Home() {
                 minWidth: 200,
               }}
             >
-              Crear Calendario
+              {t('createCalendar')}
             </Button>
             
             <Button
@@ -299,7 +300,7 @@ function Home() {
                 minWidth: 200,
               }}
             >
-              Unirse a Calendario
+              {t('joinCalendar')}
             </Button>
           </Stack>
 
@@ -338,14 +339,14 @@ function Home() {
                     fontSize: { xs: "1.1rem", md: "1.25rem" }
                   }}
                 >
-                  Sin contraseñas
+                  {t('noPasswords')}
                 </Typography>
                 <Typography 
                   variant="body2" 
                   color="#8E8E93"
                   sx={{ fontSize: { xs: "0.875rem", md: "0.875rem" } }}
                 >
-                  Acceso simple con IDs únicos generados automáticamente
+                  {t('noPasswordsDesc')}
                 </Typography>
               </Paper>
               
@@ -375,14 +376,14 @@ function Home() {
                     fontSize: { xs: "1.1rem", md: "1.25rem" }
                   }}
                 >
-                  Interfaz intuitiva
+                  {t('intuitiveInterface')}
                 </Typography>
                 <Typography 
                   variant="body2" 
                   color="#8E8E93"
                   sx={{ fontSize: { xs: "0.875rem", md: "0.875rem" } }}
                 >
-                  Diseño limpio y profesional optimizado para cualquier dispositivo
+                  {t('intuitiveInterfaceDesc')}
                 </Typography>
               </Paper>
               
@@ -412,14 +413,14 @@ function Home() {
                     fontSize: { xs: "1.1rem", md: "1.25rem" }
                   }}
                 >
-                  Resultados inmediatos
+                  {t('immediateResults')}
                 </Typography>
                 <Typography 
                   variant="body2" 
                   color="#8E8E93"
                   sx={{ fontSize: { xs: "0.875rem", md: "0.875rem" } }}
                 >
-                  Visualiza disponibilidades y encuentra la mejor fecha al instante
+                  {t('immediateResultsDesc')}
                 </Typography>
               </Paper>
             </Stack>
@@ -443,7 +444,7 @@ function Home() {
         <DialogTitle>
           <Stack direction="row" alignItems="center" justifyContent="space-between">
             <Typography variant="h6" fontWeight={600}>
-              Crear Nuevo Calendario
+              {t('createNewCalendar')}
             </Typography>
             <IconButton 
               onClick={() => handleDialogClose(setShowCreateDialog)}
@@ -458,11 +459,11 @@ function Home() {
         
         <DialogContent sx={{ pt: 3 }}>
           <Typography variant="body2" color="#8E8E93" sx={{ mb: 3 }}>
-            Introduce tu nombre para crear un nuevo calendario. Se generará automáticamente un ID único que podrás compartir.
+            {t('enterNameToStart')}
           </Typography>
           
           <TextField
-            label="Tu nombre"
+            label={t('yourName')}
             value={name}
             onChange={(e) => setName(e.target.value)}
             variant="outlined"
@@ -499,7 +500,7 @@ function Home() {
               borderRadius: 1.5,
             }}
           >
-            Cancelar
+            {t('cancel')}
           </Button>
           <Button 
             onClick={handleCreateCalendarSubmit} 
@@ -520,7 +521,7 @@ function Home() {
               },
             }}
           >
-            {isLoading ? "Creando..." : "Crear"}
+            {isLoading ? t('creating') : t('create')}
           </Button>
         </DialogActions>
       </Dialog>
@@ -541,7 +542,7 @@ function Home() {
         <DialogTitle>
           <Stack direction="row" alignItems="center" justifyContent="space-between">
             <Typography variant="h6" fontWeight={600}>
-              Unirse a Calendario
+              {t('joinCalendarTitle')}
             </Typography>
             <IconButton 
               onClick={() => handleDialogClose(setShowLoginDialog)}
@@ -556,12 +557,12 @@ function Home() {
         
         <DialogContent sx={{ pt: 3 }}>
           <Typography variant="body2" color="#8E8E93" sx={{ mb: 3 }}>
-            Introduce tu nombre y el ID del calendario al que deseas acceder.
+            {t('enterNameAndId')}
           </Typography>
           
           <Stack spacing={2}>
             <TextField
-              label="Tu nombre"
+              label={t('yourName')}
               value={name}
               onChange={(e) => setName(e.target.value)}
               variant="outlined"
@@ -581,7 +582,7 @@ function Home() {
             />
             
             <TextField
-              label="ID del calendario"
+              label={t('calendarId')}
               value={calendarId}
               onChange={(e) => setCalendarId(e.target.value)}
               variant="outlined"
@@ -620,7 +621,7 @@ function Home() {
               borderRadius: 1.5,
             }}
           >
-            Cancelar
+            {t('cancel')}
           </Button>
           <Button 
             onClick={handleLoginSubmit} 
@@ -641,7 +642,7 @@ function Home() {
               },
             }}
           >
-            {isLoading ? "Verificando..." : "Unirse"}
+            {isLoading ? t('verifying') : t('join')}
           </Button>
         </DialogActions>
       </Dialog>
@@ -661,10 +662,10 @@ function Home() {
       >
         <DialogTitle sx={{ textAlign: "center", pt: 4 }}>
           <Typography variant="h5" fontWeight={700} color="#1C1C1E" sx={{ mb: 1 }}>
-            ¡Calendario creado!
+            {t('calendarCreated')}
           </Typography>
           <Typography variant="body2" color="#8E8E93">
-            Tu calendario se ha creado exitosamente
+            {t('calendarCreatedDesc')}
           </Typography>
         </DialogTitle>
         
@@ -681,7 +682,7 @@ function Home() {
             }}
           >
             <Typography variant="body2" sx={{ color: "#007AFF", mb: 1, fontWeight: 500 }}>
-              Enlace del calendario
+              {t('calendarLink')}
             </Typography>
             <Typography 
               variant="body1" 
@@ -760,11 +761,11 @@ function Home() {
           </Paper>
           
           <Typography variant="body2" color="#8E8E93" sx={{ mb: 2 }}>
-            Comparte este enlace para que otros se unan al calendario
+            {t('shareInstructions')}
           </Typography>
           
           <Typography variant="body2" color="#616161" sx={{ fontSize: "0.8rem" }}>
-            💡 En móvil, los iconos abrirán las aplicaciones correspondientes
+            {t('mobileAppsHint')}
           </Typography>
         </DialogContent>
         
@@ -784,7 +785,7 @@ function Home() {
               },
             }}
           >
-            Ir al calendario
+            {t('continue')}
           </Button>
         </DialogActions>
       </Dialog>
