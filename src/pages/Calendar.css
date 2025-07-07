@@ -123,8 +123,9 @@
   transition: background-color 0.15s ease;
   border-right: 1px solid var(--color-separator);
   border-bottom: 1px solid var(--color-separator);
-  min-height: 80px;
+  min-height: 100px;
   cursor: pointer;
+  position: relative;
 }
 
 .rbc-date-cell:hover {

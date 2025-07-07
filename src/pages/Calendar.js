@@ -40,7 +40,7 @@ import {
 import "./Calendar.css";
 
 // Importamos las funciones de utilidad
-import { generateEvents, eventStyleGetter, dayPropGetter } from './CalendarUtils';
+import { dayPropGetter } from './CalendarUtils';
 import Recommendation from '../components/Recommendation';
 import { saveUserSelections, getUserFromCalendar, fetchCalendarSelections } from '../services';
 
@@ -62,7 +62,6 @@ function Calendar() {
   const queryParams = new URLSearchParams(location.search);
   const userName = queryParams.get('name');
   const [selectedDays, setSelectedDays] = useState({ green: [], red: [], orange: [] });
-  const [events, setEvents] = useState([]);
   const [step, setStep] = useState(1);
   const [popupDate, setPopupDate] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -105,11 +104,7 @@ function Calendar() {
         const users = await fetchCalendarSelections(calendarId);
         setAllUsers(users);
         
-        // Update events to show all users' selections
-        if (userName && selectedDays) {
-          const updatedEvents = generateEvents(selectedDays, handleEventClick, users, userName);
-          setEvents(updatedEvents);
-        }
+        // Users data loaded, calendar will re-render automatically
       } catch (error) {
         console.error('Error loading users:', error);
       }
@@ -118,26 +113,7 @@ function Calendar() {
     loadAllUsers();
   }, [calendarId, userName, selectedDays]);
 
-  // Update events when current user's selections change
-  useEffect(() => {
-    if (userName && selectedDays) {
-      const updatedEvents = generateEvents(selectedDays, handleEventClick, allUsers, userName);
-      setEvents(updatedEvents);
-    }
-  }, [selectedDays, allUsers, userName]);
-
-  // Force re-render of events on window resize for responsive styling
-  useEffect(() => {
-    const handleResize = () => {
-      if (userName && selectedDays) {
-        const updatedEvents = generateEvents(selectedDays, handleEventClick, allUsers, userName);
-        setEvents(updatedEvents);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [selectedDays, allUsers, userName]);
+  // Calendar will automatically re-render when selectedDays or allUsers change
 
   const handleSelectSlot = ({ start }) => {
     const today = new Date().setHours(0, 0, 0, 0);
@@ -199,8 +175,6 @@ function Calendar() {
       });
 
       updated[type].push(dateStr);
-      const updatedEvents = generateEvents(updated, handleEventClick, allUsers, userName);
-      setEvents(updatedEvents);
 
       return updated;
     });
@@ -321,8 +295,6 @@ function Calendar() {
       if (existingUser && existingUser.selectedDays) {
         // User exists, load their existing data
         setSelectedDays(existingUser.selectedDays);
-        const loadedEvents = generateEvents(existingUser.selectedDays, handleEventClick, allUsers, tempUserName.trim());
-        setEvents(loadedEvents);
       }
 
       // Update URL to include the name
@@ -492,7 +464,7 @@ function Calendar() {
         >
           <BigCalendar
             localizer={localizer}
-            events={events}
+            events={[]} // Remove events to avoid extra space
             startAccessor="start"
             endAccessor="end"
             selectable={true}
@@ -503,9 +475,127 @@ function Calendar() {
               width: "100%",
               fontFamily: "'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
             }}
-            eventPropGetter={eventStyleGetter}
             dayPropGetter={dayPropGetter}
             components={{
+              month: {
+                dateHeader: ({ date, label }) => {
+                  // Get votes for this specific date
+                  const dateStr = date.toDateString();
+                  const currentUserVote = Object.keys(selectedDays).find(key => 
+                    selectedDays[key].includes(dateStr)
+                  );
+                  
+                  // Get other users' votes for this date
+                  const otherUsersVotes = allUsers
+                    .filter(user => user.userId !== userName)
+                    .map(user => {
+                      const userVote = user.selectedDays ? Object.keys(user.selectedDays).find(key => 
+                        user.selectedDays[key].includes(dateStr)
+                      ) : null;
+                      return userVote ? { userId: user.userId, vote: userVote } : null;
+                    })
+                    .filter(Boolean);
+
+                  return (
+                    <Box sx={{ 
+                      display: 'flex', 
+                      flexDirection: 'column', 
+                      alignItems: 'center',
+                      height: '100%',
+                      p: 1,
+                      position: 'relative'
+                    }}>
+                      {/* Date number */}
+                      <Typography 
+                        sx={{ 
+                          fontSize: { xs: '14px', md: '16px' },
+                          fontWeight: 500,
+                          color: 'text.primary',
+                          mb: 0.5
+                        }}
+                      >
+                        {label}
+                      </Typography>
+                      
+                      {/* Current user vote indicator */}
+                      {currentUserVote && (
+                        <Box
+                          sx={{
+                            width: { xs: 16, md: 20 },
+                            height: { xs: 16, md: 20 },
+                            borderRadius: '50%',
+                            backgroundColor: 
+                              currentUserVote === 'green' ? '#28A745' :
+                              currentUserVote === 'red' ? '#FF3B30' :
+                              currentUserVote === 'orange' ? '#FF9500' : 'transparent',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            mb: 0.5,
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                            border: '2px solid white'
+                          }}
+                        >
+                          <Typography 
+                            sx={{ 
+                              fontSize: { xs: '8px', md: '10px' },
+                              color: 'white',
+                              fontWeight: 'bold'
+                            }}
+                          >
+                            {currentUserVote === 'green' ? '✓' : 
+                             currentUserVote === 'red' ? '✗' : '?'}
+                          </Typography>
+                        </Box>
+                      )}
+                      
+                      {/* Other users' votes as small dots */}
+                      {otherUsersVotes.length > 0 && (
+                        <Stack 
+                          direction="row" 
+                          spacing={0.25} 
+                          sx={{ 
+                            flexWrap: 'wrap',
+                            justifyContent: 'center',
+                            maxWidth: '100%'
+                          }}
+                        >
+                          {otherUsersVotes.slice(0, 6).map((userVote, index) => (
+                            <Box
+                              key={`${userVote.userId}-${index}`}
+                              sx={{
+                                width: { xs: 6, md: 8 },
+                                height: { xs: 6, md: 8 },
+                                borderRadius: '50%',
+                                backgroundColor: 
+                                  userVote.vote === 'green' ? '#28A745' :
+                                  userVote.vote === 'red' ? '#FF3B30' :
+                                  userVote.vote === 'orange' ? '#FF9500' : '#CCCCCC',
+                                title: `${userVote.userId}: ${
+                                  userVote.vote === 'green' ? t('available') :
+                                  userVote.vote === 'red' ? t('notAvailable') :
+                                  userVote.vote === 'orange' ? t('maybe') : ''
+                                }`
+                              }}
+                            />
+                          ))}
+                          {otherUsersVotes.length > 6 && (
+                            <Typography 
+                              sx={{ 
+                                fontSize: { xs: '6px', md: '8px' },
+                                color: 'text.secondary',
+                                ml: 0.25
+                              }}
+                            >
+                              +{otherUsersVotes.length - 6}
+                            </Typography>
+                          )}
+                        </Stack>
+                      )}
+                    </Box>
+                  );
+                }
+              },
               toolbar: (props) => {
                 return (
                   <Box className="calendar-month-nav" sx={{ p: 3 }}>
@@ -535,7 +625,7 @@ function Calendar() {
                       sx={{
                         fontSize: '20px',
                         fontWeight: 600,
-                        color: 'black',
+                        color: isDark ? '#FFFFFF' : '#1C1C1E',
                         margin: 0,
                         textAlign: 'center',
                         fontFamily: "'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
