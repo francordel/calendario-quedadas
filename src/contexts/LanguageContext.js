@@ -105,7 +105,11 @@ const translations = {
     creating: 'Creando...',
     accessing: 'Accediendo...',
     saving: 'Guardando...',
-    verifying: 'Verificando...'
+    verifying: 'Verificando...',
+    
+    // Calendar vote display
+    you: 'tú',
+    more: 'más'
   },
   
   en: {
@@ -202,7 +206,11 @@ const translations = {
     creating: 'Creating...',
     accessing: 'Accessing...',
     saving: 'Saving...',
-    verifying: 'Verifying...'
+    verifying: 'Verifying...',
+    
+    // Calendar vote display
+    you: 'you',
+    more: 'more'
   }
 };
 

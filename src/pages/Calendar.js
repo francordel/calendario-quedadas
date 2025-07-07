@@ -470,14 +470,21 @@ function Calendar() {
                     .filter(Boolean);
 
                   return (
-                    <Box sx={{ 
-                      display: 'flex', 
-                      flexDirection: 'column', 
-                      alignItems: 'center',
-                      height: '100%',
-                      p: 1,
-                      position: 'relative'
-                    }}>
+                    <Box 
+                      onClick={() => handleDateClick(date)}
+                      sx={{ 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        alignItems: 'center',
+                        height: '100%',
+                        p: 1,
+                        position: 'relative',
+                        cursor: 'pointer',
+                        '&:hover': {
+                          backgroundColor: 'action.hover',
+                        }
+                      }}
+                    >
                       {/* Date number */}
                       <Typography 
                         sx={{ 
@@ -494,73 +501,79 @@ function Calendar() {
                       {currentUserVote && (
                         <Box
                           sx={{
-                            width: { xs: 16, md: 20 },
-                            height: { xs: 16, md: 20 },
-                            borderRadius: '50%',
                             backgroundColor: 
                               currentUserVote === 'green' ? '#28A745' :
                               currentUserVote === 'red' ? '#FF3B30' :
                               currentUserVote === 'orange' ? '#FF9500' : 'transparent',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
+                            borderRadius: '12px',
+                            px: 1,
+                            py: 0.25,
                             mb: 0.5,
                             boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                            border: '2px solid white'
+                            border: '1px solid white'
                           }}
                         >
                           <Typography 
                             sx={{ 
                               fontSize: { xs: '8px', md: '10px' },
                               color: 'white',
-                              fontWeight: 'bold'
+                              fontWeight: 'bold',
+                              textAlign: 'center',
+                              lineHeight: 1.2
                             }}
                           >
-                            {currentUserVote === 'green' ? '✓' : 
+                            {userName} ({t('you')}): {currentUserVote === 'green' ? '✓' : 
                              currentUserVote === 'red' ? '✗' : '?'}
                           </Typography>
                         </Box>
                       )}
                       
-                      {/* Other users' votes as small dots */}
+                      {/* Other users' votes */}
                       {otherUsersVotes.length > 0 && (
                         <Stack 
-                          direction="row" 
                           spacing={0.25} 
                           sx={{ 
-                            flexWrap: 'wrap',
-                            justifyContent: 'center',
-                            maxWidth: '100%'
+                            maxWidth: '100%',
+                            alignItems: 'center'
                           }}
                         >
-                          {otherUsersVotes.slice(0, 6).map((userVote, index) => (
+                          {otherUsersVotes.slice(0, 3).map((userVote, index) => (
                             <Box
                               key={`${userVote.userId}-${index}`}
                               sx={{
-                                width: { xs: 6, md: 8 },
-                                height: { xs: 6, md: 8 },
-                                borderRadius: '50%',
                                 backgroundColor: 
                                   userVote.vote === 'green' ? '#28A745' :
                                   userVote.vote === 'red' ? '#FF3B30' :
                                   userVote.vote === 'orange' ? '#FF9500' : '#CCCCCC',
-                                title: `${userVote.userId}: ${
-                                  userVote.vote === 'green' ? t('available') :
-                                  userVote.vote === 'red' ? t('notAvailable') :
-                                  userVote.vote === 'orange' ? t('maybe') : ''
-                                }`
+                                borderRadius: '8px',
+                                px: 0.5,
+                                py: 0.125,
+                                mb: 0.25
                               }}
-                            />
+                            >
+                              <Typography 
+                                sx={{ 
+                                  fontSize: { xs: '6px', md: '8px' },
+                                  color: 'white',
+                                  fontWeight: 'bold',
+                                  textAlign: 'center',
+                                  lineHeight: 1.1
+                                }}
+                              >
+                                {userVote.userId}: {userVote.vote === 'green' ? '✓' : 
+                                 userVote.vote === 'red' ? '✗' : '?'}
+                              </Typography>
+                            </Box>
                           ))}
-                          {otherUsersVotes.length > 6 && (
+                          {otherUsersVotes.length > 3 && (
                             <Typography 
                               sx={{ 
                                 fontSize: { xs: '6px', md: '8px' },
                                 color: 'text.secondary',
-                                ml: 0.25
+                                fontWeight: 500
                               }}
                             >
-                              +{otherUsersVotes.length - 6}
+                              +{otherUsersVotes.length - 3} {t('more')}
                             </Typography>
                           )}
                         </Stack>
