@@ -27,33 +27,41 @@ function Footer() {
         mt: 4,
       }}
     >
-      <Toolbar sx={{ px: { xs: 2, md: 4 }, py: 2 }}>
+      <Toolbar sx={{ px: { xs: 1, sm: 2, md: 4 }, py: { xs: 1.5, md: 2 } }}>
         <Stack 
           direction={{ xs: 'column', md: 'row' }} 
           alignItems={{ xs: 'center', md: 'center' }} 
-          spacing={2} 
-          sx={{ flex: 1 }}
+          spacing={{ xs: 1.5, md: 2 }}
+          sx={{ flex: 1, width: "100%" }}
         >
           {/* Left Section - App Info */}
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <CodeIcon sx={{ color: '#007AFF', fontSize: 20 }} />
+          <Stack 
+            direction="row" 
+            alignItems="center" 
+            spacing={1}
+            sx={{ 
+              justifyContent: { xs: 'center', md: 'flex-start' },
+              flexWrap: 'wrap'
+            }}
+          >
+            <CodeIcon sx={{ color: '#007AFF', fontSize: { xs: 16, md: 20 } }} />
             <Typography
               variant="body2"
               sx={{
                 color: '#8E8E93',
                 fontWeight: 500,
-                fontSize: '0.875rem'
+                fontSize: { xs: '0.75rem', md: '0.875rem' }
               }}
             >
               Hecho con
             </Typography>
-            <FavoriteIcon sx={{ color: '#FF3B30', fontSize: 16 }} />
+            <FavoriteIcon sx={{ color: '#FF3B30', fontSize: { xs: 14, md: 16 } }} />
             <Typography
               variant="body2"
               sx={{
                 color: '#8E8E93',
                 fontWeight: 500,
-                fontSize: '0.875rem'
+                fontSize: { xs: '0.75rem', md: '0.875rem' }
               }}
             >
               por Fran Cortés-Delgado
@@ -76,6 +84,25 @@ function Footer() {
               }}
             >
               ¿Tu empresa quiere publicitarse aquí?
+              <Typography
+                component="a"
+                href="https://misintaxis5.wordpress.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="body2"
+                sx={{
+                  color: '#007AFF',
+                  fontSize: '0.875rem',
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  ml: 1,
+                  '&:hover': {
+                    textDecoration: 'underline',
+                  },
+                }}
+              >
+                MiSintaxis
+              </Typography>
             </Typography>
 
             <Divider orientation="vertical" flexItem sx={{ borderColor: '#E5E5EA' }} />
@@ -94,16 +121,17 @@ function Footer() {
           {/* Right Section - Contact */}
           <Button
             href="mailto:fran.j.cordel@gmail.com"
-            startIcon={<EmailIcon />}
+            startIcon={<EmailIcon sx={{ fontSize: { xs: 16, md: 18 } }} />}
             sx={{
               color: '#007AFF',
               border: '1px solid #007AFF',
               borderRadius: 1.5,
-              fontSize: '0.875rem',
+              fontSize: { xs: '0.75rem', md: '0.875rem' },
               fontWeight: 500,
               textTransform: 'none',
-              px: 2,
-              py: 1,
+              px: { xs: 1.5, md: 2 },
+              py: { xs: 0.75, md: 1 },
+              minWidth: { xs: 'auto', md: 'auto' },
               '&:hover': {
                 backgroundColor: 'rgba(0, 122, 255, 0.04)',
                 borderColor: '#0056CC'
@@ -114,33 +142,6 @@ function Footer() {
           </Button>
         </Stack>
 
-        {/* Mobile Layout */}
-        <Box sx={{ display: { xs: 'flex', md: 'none' }, width: '100%' }}>
-          <Stack spacing={2} sx={{ width: '100%' }}>
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Typography
-                variant="body2"
-                sx={{
-                  color: '#8E8E93',
-                  fontSize: '0.75rem',
-                  fontWeight: 500,
-                }}
-              >
-                ¿Tu empresa quiere publicitarse?
-              </Typography>
-
-              <Typography
-                variant="body2"
-                sx={{
-                  color: '#C7C7CC',
-                  fontSize: '0.75rem'
-                }}
-              >
-                © 2024
-              </Typography>
-            </Stack>
-          </Stack>
-        </Box>
       </Toolbar>
     </AppBar>
   );

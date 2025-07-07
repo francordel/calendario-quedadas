@@ -29,7 +29,11 @@ import {
   Cancel as CancelIcon,
   Help as HelpIcon,
   Person as PersonIcon,
-  Home as HomeIcon
+  Home as HomeIcon,
+  Share as ShareIcon,
+  WhatsApp as WhatsAppIcon,
+  Telegram as TelegramIcon,
+  ContentCopy as CopyIcon
 } from "@mui/icons-material";
 import "./Calendar.css";
 
@@ -65,6 +69,8 @@ function Calendar() {
   const [tempUserName, setTempUserName] = useState('');
   const [nameError, setNameError] = useState('');
   const [allUsers, setAllUsers] = useState([]);
+  const [showShareDialog, setShowShareDialog] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
   const navigate = useNavigate();
 
   // Detect mobile device
@@ -124,35 +130,41 @@ function Calendar() {
     }
   };
 
-  // Handle single click on mobile and long press on desktop
+  // Enhanced date selection handling for all devices
   const handleDateClick = useCallback((event) => {
-    if (isMobile) {
-      event.preventDefault();
-      const clickedElement = event.target.closest('.rbc-date-cell');
-      if (clickedElement) {
-        const dateButton = clickedElement.querySelector('.rbc-button-link');
-        if (dateButton) {
-          const dateText = dateButton.textContent;
-          const currentMonth = new Date().getMonth();
-          const currentYear = new Date().getFullYear();
-          const selectedDate = new Date(currentYear, currentMonth, parseInt(dateText));
-          
-          const today = new Date().setHours(0, 0, 0, 0);
-          if (selectedDate >= today) {
-            setPopupDate(selectedDate);
-            setOpenDialog(true);
-          }
+    // Handle both mobile and desktop clicks
+    event.preventDefault();
+    const clickedElement = event.target.closest('.rbc-date-cell');
+    if (clickedElement) {
+      const dateButton = clickedElement.querySelector('.rbc-button-link');
+      if (dateButton) {
+        const dateText = dateButton.textContent;
+        const currentMonth = new Date().getMonth();
+        const currentYear = new Date().getFullYear();
+        const selectedDate = new Date(currentYear, currentMonth, parseInt(dateText));
+        
+        const today = new Date().setHours(0, 0, 0, 0);
+        if (selectedDate >= today) {
+          setPopupDate(selectedDate);
+          setOpenDialog(true);
         }
       }
     }
-  }, [isMobile]);
+  }, []);
 
   useEffect(() => {
-    if (isMobile) {
-      document.addEventListener('click', handleDateClick);
-      return () => document.removeEventListener('click', handleDateClick);
+    // Add both click and touch event listeners for universal compatibility
+    const calendarElement = document.querySelector('.rbc-calendar');
+    if (calendarElement) {
+      calendarElement.addEventListener('click', handleDateClick);
+      calendarElement.addEventListener('touchend', handleDateClick);
+      
+      return () => {
+        calendarElement.removeEventListener('click', handleDateClick);
+        calendarElement.removeEventListener('touchend', handleDateClick);
+      };
     }
-  }, [isMobile, handleDateClick]);
+  }, [handleDateClick]);
 
   const handleDialogClose = () => {
     setPopupDate(null);
@@ -191,6 +203,10 @@ function Calendar() {
         setIsLoading(true);
         await saveUserSelections(userName, calendarId, selectedDays);
         setShowRecommendation(true);
+        // Show share dialog after completing voting
+        setTimeout(() => {
+          setShowShareDialog(true);
+        }, 2000);
       } catch (error) {
         console.error("Error al guardar las selecciones:", error);
       } finally {
@@ -216,6 +232,61 @@ function Calendar() {
   };
 
   const counts = getSelectionCounts();
+
+  // Sharing functionality
+  const getShareableLink = () => {
+    return `${window.location.origin}/${calendarId}`;
+  };
+
+  const getShareMessage = () => {
+    return `¡Te invito a coordinar nuestra reunión! 📅\n\nÚnete al calendario "${calendarId}" para elegir las fechas que mejor te vayan.\n\n${getShareableLink()}\n\n¡Es súper fácil y rápido! 🚀`;
+  };
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(getShareableLink());
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+      const textArea = document.createElement('textarea');
+      textArea.value = getShareableLink();
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    }
+  };
+
+  const shareWhatsApp = () => {
+    const message = encodeURIComponent(getShareMessage());
+    const whatsappUrl = `https://wa.me/?text=${message}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
+  const shareTelegram = () => {
+    const message = encodeURIComponent(getShareMessage());
+    const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(getShareableLink())}&text=${message}`;
+    window.open(telegramUrl, '_blank');
+  };
+
+  const shareNative = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Calendario de Quedadas',
+          text: 'Te invito a coordinar nuestra reunión',
+          url: getShareableLink(),
+        });
+      } catch (err) {
+        console.log('Error sharing:', err);
+      }
+    } else {
+      copyToClipboard();
+    }
+  };
 
   const handleNameSubmit = async () => {
     if (!tempUserName.trim()) {
@@ -319,21 +390,39 @@ function Calendar() {
               </Typography>
             </Box>
 
-            <IconButton
-              onClick={handleBack}
-              sx={{
-                backgroundColor: "#F5F5F5",
-                border: "1px solid #E0E0E0",
-                "&:hover": {
-                  backgroundColor: "#EEEEEE",
-                  borderColor: "#BDBDBD",
-                },
-                width: 44,
-                height: 44,
-              }}
-            >
-              <ArrowBackIcon sx={{ color: "#424242" }} />
-            </IconButton>
+            <Stack direction="row" spacing={1}>
+              <IconButton
+                onClick={() => setShowShareDialog(true)}
+                sx={{
+                  backgroundColor: "#F0F9FF",
+                  border: "1px solid #007AFF",
+                  "&:hover": {
+                    backgroundColor: "#E3F2FD",
+                    borderColor: "#0056CC",
+                  },
+                  width: 44,
+                  height: 44,
+                }}
+              >
+                <ShareIcon sx={{ color: "#007AFF" }} />
+              </IconButton>
+
+              <IconButton
+                onClick={handleBack}
+                sx={{
+                  backgroundColor: "#F5F5F5",
+                  border: "1px solid #E0E0E0",
+                  "&:hover": {
+                    backgroundColor: "#EEEEEE",
+                    borderColor: "#BDBDBD",
+                  },
+                  width: 44,
+                  height: 44,
+                }}
+              >
+                <ArrowBackIcon sx={{ color: "#424242" }} />
+              </IconButton>
+            </Stack>
           </Stack>
 
           {/* Status Chips */}
@@ -691,6 +780,156 @@ function Calendar() {
               }}
             >
               {isLoading ? "Accediendo..." : "Continuar"}
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Share Dialog */}
+        <Dialog 
+          open={showShareDialog} 
+          onClose={() => setShowShareDialog(false)}
+          maxWidth="sm" 
+          fullWidth
+          PaperProps={{
+            sx: {
+              borderRadius: 3,
+              border: "1px solid #E5E5EA",
+            }
+          }}
+        >
+          <DialogTitle sx={{ 
+            textAlign: "center", 
+            fontWeight: 600,
+            color: "#1C1C1E",
+            pb: 2,
+            pt: 4,
+          }}>
+            <Typography variant="h5" fontWeight={700} sx={{ mb: 1 }}>
+              ¡Comparte el calendario!
+            </Typography>
+            <Typography variant="body2" color="#8E8E93">
+              Invita a más personas a participar
+            </Typography>
+          </DialogTitle>
+          
+          <DialogContent sx={{ pt: 2, pb: 2 }}>
+            {/* Link Display */}
+            <Paper
+              elevation={0}
+              sx={{
+                p: 3,
+                backgroundColor: "#F0F9FF",
+                border: "1px solid #007AFF",
+                borderRadius: 3,
+                mb: 3,
+              }}
+            >
+              <Typography variant="body2" sx={{ color: "#007AFF", mb: 1, fontWeight: 500 }}>
+                Enlace del calendario
+              </Typography>
+              <Typography 
+                variant="body1" 
+                sx={{ 
+                  color: "#1C1C1E", 
+                  fontWeight: 500, 
+                  fontSize: "0.9rem",
+                  wordBreak: "break-all",
+                  mb: 2,
+                  p: 2,
+                  backgroundColor: "rgba(255, 255, 255, 0.8)",
+                  borderRadius: 2,
+                }}
+              >
+                {getShareableLink()}
+              </Typography>
+              
+              {/* Sharing Buttons */}
+              <Stack direction="row" spacing={1} justifyContent="center">
+                <IconButton
+                  onClick={copyToClipboard}
+                  sx={{
+                    color: copySuccess ? "#28A745" : "#007AFF",
+                    backgroundColor: copySuccess ? "rgba(40, 167, 69, 0.1)" : "rgba(0, 122, 255, 0.1)",
+                    "&:hover": { 
+                      backgroundColor: copySuccess ? "rgba(40, 167, 69, 0.2)" : "rgba(0, 122, 255, 0.2)" 
+                    },
+                    width: 44,
+                    height: 44,
+                  }}
+                >
+                  {copySuccess ? <CheckIcon /> : <CopyIcon />}
+                </IconButton>
+                
+                <IconButton
+                  onClick={shareWhatsApp}
+                  sx={{
+                    color: "#25D366",
+                    backgroundColor: "rgba(37, 211, 102, 0.1)",
+                    "&:hover": { backgroundColor: "rgba(37, 211, 102, 0.2)" },
+                    width: 44,
+                    height: 44,
+                  }}
+                >
+                  <WhatsAppIcon />
+                </IconButton>
+                
+                <IconButton
+                  onClick={shareTelegram}
+                  sx={{
+                    color: "#0088CC",
+                    backgroundColor: "rgba(0, 136, 204, 0.1)",
+                    "&:hover": { backgroundColor: "rgba(0, 136, 204, 0.2)" },
+                    width: 44,
+                    height: 44,
+                  }}
+                >
+                  <TelegramIcon />
+                </IconButton>
+                
+                {navigator.share && (
+                  <IconButton
+                    onClick={shareNative}
+                    sx={{
+                      color: "#8E8E93",
+                      backgroundColor: "rgba(142, 142, 147, 0.1)",
+                      "&:hover": { backgroundColor: "rgba(142, 142, 147, 0.2)" },
+                      width: 44,
+                      height: 44,
+                    }}
+                  >
+                    <ShareIcon />
+                  </IconButton>
+                )}
+              </Stack>
+            </Paper>
+            
+            <Typography variant="body2" color="#8E8E93" textAlign="center" sx={{ mb: 2 }}>
+              Comparte este enlace para que otros se unan al calendario
+            </Typography>
+            
+            <Typography variant="body2" color="#616161" textAlign="center" sx={{ fontSize: "0.8rem" }}>
+              💡 En móvil, los iconos abrirán las aplicaciones correspondientes
+            </Typography>
+          </DialogContent>
+          
+          <DialogActions sx={{ p: 3, pt: 1 }}>
+            <Button 
+              onClick={() => setShowShareDialog(false)}
+              variant="contained"
+              fullWidth
+              size="large"
+              sx={{
+                backgroundColor: "#007AFF",
+                borderRadius: 2,
+                py: 1.5,
+                fontWeight: 500,
+                textTransform: "none",
+                "&:hover": {
+                  backgroundColor: "#0056CC",
+                },
+              }}
+            >
+              Cerrar
             </Button>
           </DialogActions>
         </Dialog>

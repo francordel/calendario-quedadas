@@ -14,16 +14,21 @@ import {
 import {
   CalendarToday as CalendarIcon,
   Home as HomeIcon,
-  Info as InfoIcon,
-  Help as HelpIcon,
   LinkedIn as LinkedInIcon,
-  GitHub as GitHubIcon
+  GitHub as GitHubIcon,
+  Language as LanguageIcon,
+  LightMode as LightModeIcon,
+  DarkMode as DarkModeIcon
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useLanguage } from '../contexts/LanguageContext';
+import { useThemeMode } from '../contexts/ThemeContext';
 
 function Header() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { language, changeLanguage, t } = useLanguage();
+  const { mode, toggleMode, isDark } = useThemeMode();
 
   const isHomePage = location.pathname === '/';
 
@@ -32,10 +37,9 @@ function Header() {
       position="static" 
       elevation={0}
       sx={{
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(20px)',
-        borderBottom: '1px solid #E5E5EA',
-        color: '#1C1C1E',
+        borderBottom: 1,
+        borderColor: 'divider',
       }}
     >
       <Toolbar sx={{ px: { xs: 2, md: 4 }, py: 1.5, minHeight: '72px' }}>
@@ -70,7 +74,7 @@ function Header() {
               variant="h6" 
               sx={{ 
                 fontWeight: 700, 
-                color: '#1C1C1E',
+                color: 'text.primary',
                 fontSize: { xs: '1.1rem', md: '1.25rem' },
                 fontFamily: "'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
               }}
@@ -98,49 +102,74 @@ function Header() {
                 },
               }}
             >
-              Inicio
+              {t('home')}
             </Button>
 
-            <Divider orientation="vertical" flexItem sx={{ mx: 1, borderColor: '#E5E5EA' }} />
+            <Divider orientation="vertical" flexItem sx={{ mx: 1, borderColor: 'divider' }} />
 
-            <Button
-              startIcon={<InfoIcon />}
+            {/* Language Selector */}
+            <Stack direction="row" spacing={0.5}>
+              <Button
+                startIcon={<LanguageIcon />}
+                onClick={() => changeLanguage('es')}
+                sx={{
+                  color: language === 'es' ? '#007AFF' : '#8E8E93',
+                  fontWeight: language === 'es' ? 600 : 500,
+                  textTransform: 'none',
+                  px: 1.5,
+                  minWidth: 'auto',
+                  borderRadius: 1.5,
+                  fontSize: '0.875rem',
+                  '&:hover': {
+                    backgroundColor: 'rgba(0, 122, 255, 0.04)',
+                    color: '#007AFF',
+                  },
+                }}
+              >
+                ES
+              </Button>
+              <Button
+                onClick={() => changeLanguage('en')}
+                sx={{
+                  color: language === 'en' ? '#007AFF' : '#8E8E93',
+                  fontWeight: language === 'en' ? 600 : 500,
+                  textTransform: 'none',
+                  px: 1.5,
+                  minWidth: 'auto',
+                  borderRadius: 1.5,
+                  fontSize: '0.875rem',
+                  '&:hover': {
+                    backgroundColor: 'rgba(0, 122, 255, 0.04)',
+                    color: '#007AFF',
+                  },
+                }}
+              >
+                EN
+              </Button>
+            </Stack>
+
+            <Divider orientation="vertical" flexItem sx={{ mx: 1, borderColor: 'divider' }} />
+
+            {/* Theme Toggle */}
+            <IconButton
+              onClick={toggleMode}
               sx={{
-                color: '#8E8E93',
-                fontWeight: 500,
-                textTransform: 'none',
-                px: 2,
-                borderRadius: 1.5,
+                color: 'text.secondary',
                 '&:hover': {
                   backgroundColor: 'rgba(0, 122, 255, 0.04)',
-                  color: '#007AFF',
+                  color: 'primary.main',
                 },
+                width: 36,
+                height: 36,
               }}
             >
-              Acerca de
-            </Button>
-
-            <Button
-              startIcon={<HelpIcon />}
-              sx={{
-                color: '#8E8E93',
-                fontWeight: 500,
-                textTransform: 'none',
-                px: 2,
-                borderRadius: 1.5,
-                '&:hover': {
-                  backgroundColor: 'rgba(0, 122, 255, 0.04)',
-                  color: '#007AFF',
-                },
-              }}
-            >
-              Ayuda
-            </Button>
+              {isDark ? <LightModeIcon sx={{ fontSize: 18 }} /> : <DarkModeIcon sx={{ fontSize: 18 }} />}
+            </IconButton>
           </Stack>
 
           {/* Developer Section */}
           <Stack direction="row" alignItems="center" spacing={2} sx={{ display: { xs: 'none', lg: 'flex' } }}>
-            <Divider orientation="vertical" flexItem sx={{ mx: 1, borderColor: '#E5E5EA' }} />
+            <Divider orientation="vertical" flexItem sx={{ mx: 1, borderColor: 'divider' }} />
             
             <Stack direction="row" alignItems="center" spacing={1}>
               <Avatar
@@ -149,13 +178,14 @@ function Header() {
                 sx={{ 
                   width: 32, 
                   height: 32,
-                  border: '2px solid #E5E5EA'
+                  border: 2,
+                  borderColor: 'divider'
                 }}
               />
               <Typography
                 variant="body2"
                 sx={{
-                  color: '#8E8E93',
+                  color: 'text.secondary',
                   fontWeight: 500,
                   fontSize: '0.875rem'
                 }}
@@ -170,12 +200,12 @@ function Header() {
                 target="_blank"
                 rel="noopener noreferrer"
                 sx={{ 
-                  color: '#8E8E93',
+                  color: 'text.secondary',
                   width: 32,
                   height: 32,
                   '&:hover': { 
                     backgroundColor: 'rgba(0, 122, 255, 0.04)',
-                    color: '#007AFF' 
+                    color: 'primary.main' 
                   }
                 }}
               >
@@ -187,12 +217,12 @@ function Header() {
                 target="_blank"
                 rel="noopener noreferrer"
                 sx={{ 
-                  color: '#8E8E93',
+                  color: 'text.secondary',
                   width: 32,
                   height: 32,
                   '&:hover': { 
                     backgroundColor: 'rgba(0, 122, 255, 0.04)',
-                    color: '#007AFF' 
+                    color: 'primary.main' 
                   }
                 }}
               >
@@ -206,7 +236,7 @@ function Header() {
             <IconButton
               onClick={() => navigate('/')}
               sx={{
-                color: isHomePage ? '#007AFF' : '#8E8E93',
+                color: isHomePage ? 'primary.main' : 'text.secondary',
                 '&:hover': { backgroundColor: 'rgba(0, 122, 255, 0.04)' },
               }}
             >

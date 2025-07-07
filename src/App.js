@@ -4,36 +4,16 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Calendar from "./pages/Calendar";
-import { Box, CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+import { Box, CssBaseline, ThemeProvider as MuiThemeProvider } from "@mui/material";
+import { LanguageProvider } from "./contexts/LanguageContext";
+import { CustomThemeProvider, useThemeMode } from "./contexts/ThemeContext";
 
-// Professional theme configuration
-const theme = createTheme({
-  typography: {
-    fontFamily: "'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
-  },
-  palette: {
-    primary: {
-      main: '#007AFF',
-    },
-    background: {
-      default: '#FAFAFA',
-    },
-  },
-  components: {
-    MuiCssBaseline: {
-      styleOverrides: {
-        body: {
-          backgroundColor: '#FAFAFA',
-          fontFamily: "'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
-        },
-      },
-    },
-  },
-});
-
-function App() {
+// App content component that uses theme
+function AppContent() {
+  const { theme } = useThemeMode();
+  
   return (
-    <ThemeProvider theme={theme}>
+    <MuiThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
         <Box
@@ -41,7 +21,6 @@ function App() {
             display: 'flex',
             flexDirection: 'column',
             minHeight: '100vh',
-            backgroundColor: '#FAFAFA',
           }}
         >
           <Header />
@@ -64,7 +43,17 @@ function App() {
           <Footer />
         </Box>
       </Router>
-    </ThemeProvider>
+    </MuiThemeProvider>
+  );
+}
+
+function App() {
+  return (
+    <LanguageProvider>
+      <CustomThemeProvider>
+        <AppContent />
+      </CustomThemeProvider>
+    </LanguageProvider>
   );
 }
 

@@ -137,22 +137,25 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
             onClose={onClose} 
             maxWidth="md" 
             fullWidth
+            fullScreen={{ xs: true, sm: false }}
             PaperProps={{
                 sx: {
-                    borderRadius: 2,
-                    border: "1px solid #E5E5EA",
-                    maxHeight: "90vh"
+                    borderRadius: { xs: 0, sm: 2 },
+                    border: { xs: "none", sm: "1px solid #E5E5EA" },
+                    maxHeight: { xs: "100vh", sm: "90vh" },
+                    margin: { xs: 0, sm: 2 },
+                    width: { xs: "100vw", sm: "auto" }
                 }
             }}
         >
             {/* Header */}
-            <Box sx={{ p: 3, pb: 0 }}>
+            <Box sx={{ p: { xs: 2, sm: 3 }, pb: 0 }}>
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
-                    <Stack direction="row" alignItems="center" spacing={2}>
+                    <Stack direction="row" alignItems="center" spacing={{ xs: 1, sm: 2 }}>
                         <Box
                             sx={{
-                                width: 48,
-                                height: 48,
+                                width: { xs: 40, sm: 48 },
+                                height: { xs: 40, sm: 48 },
                                 borderRadius: 2,
                                 backgroundColor: "#F0F9FF",
                                 display: "flex",
@@ -161,13 +164,22 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                                 border: "1px solid #007AFF"
                             }}
                         >
-                            <TrendingUpIcon sx={{ color: "#007AFF", fontSize: 24 }} />
+                            <TrendingUpIcon sx={{ color: "#007AFF", fontSize: { xs: 20, sm: 24 } }} />
                         </Box>
                         <Box>
-                            <Typography variant="h5" fontWeight={600} color="#1C1C1E">
+                            <Typography 
+                                variant="h5" 
+                                fontWeight={600} 
+                                color="#1C1C1E"
+                                sx={{ fontSize: { xs: "1.25rem", sm: "1.5rem" } }}
+                            >
                                 Fechas Recomendadas
                             </Typography>
-                            <Typography variant="body2" color="#8E8E93">
+                            <Typography 
+                                variant="body2" 
+                                color="#8E8E93"
+                                sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+                            >
                                 Basado en las disponibilidades del equipo
                             </Typography>
                         </Box>
@@ -180,32 +192,42 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
 
             <Divider />
 
-            <DialogContent sx={{ p: 0 }}>
+            <DialogContent sx={{ p: 0, overflow: "auto" }}>
                 {loading ? (
-                    <Box sx={{ p: 6, textAlign: "center" }}>
+                    <Box sx={{ p: { xs: 4, sm: 6 }, textAlign: "center" }}>
                         <CircularProgress sx={{ color: "#007AFF", mb: 2 }} />
-                        <Typography color="#8E8E93">
+                        <Typography 
+                            color="#8E8E93"
+                            sx={{ fontSize: { xs: "0.875rem", sm: "1rem" } }}
+                        >
                             Analizando disponibilidades...
                         </Typography>
                     </Box>
                 ) : recommendedDates.length === 0 ? (
-                    <Box sx={{ p: 6, textAlign: "center" }}>
-                        <CalendarIcon sx={{ fontSize: 48, color: "#C7C7CC", mb: 2 }} />
-                        <Typography variant="h6" color="#1C1C1E" sx={{ mb: 1 }}>
+                    <Box sx={{ p: { xs: 4, sm: 6 }, textAlign: "center" }}>
+                        <CalendarIcon sx={{ fontSize: { xs: 40, sm: 48 }, color: "#C7C7CC", mb: 2 }} />
+                        <Typography 
+                            variant="h6" 
+                            color="#1C1C1E" 
+                            sx={{ mb: 1, fontSize: { xs: "1.125rem", sm: "1.25rem" } }}
+                        >
                             No hay fechas disponibles
                         </Typography>
-                        <Typography color="#8E8E93">
+                        <Typography 
+                            color="#8E8E93"
+                            sx={{ fontSize: { xs: "0.875rem", sm: "1rem" } }}
+                        >
                             No se encontraron fechas con disponibilidad positiva.
                         </Typography>
                     </Box>
                 ) : (
-                    <Box sx={{ p: 3 }}>
+                    <Box sx={{ p: { xs: 2, sm: 3 } }}>
                         {/* Date Navigation */}
                         <Paper
                             elevation={0}
                             sx={{
-                                p: 3,
-                                mb: 3,
+                                p: { xs: 2, sm: 3 },
+                                mb: { xs: 2, sm: 3 },
                                 backgroundColor: "#FAFAFA",
                                 border: "1px solid #E5E5EA",
                                 borderRadius: 2,
@@ -215,22 +237,44 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                                 <IconButton
                                     onClick={handlePrevDate}
                                     disabled={currentDateIndex === 0}
+                                    size={window.innerWidth < 600 ? "small" : "medium"}
                                     sx={{
                                         backgroundColor: "white",
                                         border: "1px solid #E0E0E0",
                                         "&:hover": { backgroundColor: "#F5F5F5" },
-                                        "&:disabled": { backgroundColor: "#FAFAFA", color: "#C7C7CC" }
+                                        "&:disabled": { backgroundColor: "#FAFAFA", color: "#C7C7CC" },
+                                        width: { xs: 36, sm: 44 },
+                                        height: { xs: 36, sm: 44 }
                                     }}
                                 >
-                                    <NavigateBeforeIcon />
+                                    <NavigateBeforeIcon sx={{ fontSize: { xs: 18, sm: 24 } }} />
                                 </IconButton>
 
-                                <Box textAlign="center">
-                                    <Typography variant="h4" fontWeight={700} color="#1C1C1E" sx={{ mb: 0.5 }}>
+                                <Box textAlign="center" sx={{ flex: 1, mx: { xs: 1, sm: 2 } }}>
+                                    <Typography 
+                                        variant="h4" 
+                                        fontWeight={700} 
+                                        color="#1C1C1E" 
+                                        sx={{ 
+                                            mb: 0.5,
+                                            fontSize: { xs: "1rem", sm: "1.5rem" },
+                                            lineHeight: 1.2
+                                        }}
+                                    >
                                         {currentRecommendation && format(new Date(currentRecommendation.date), "EEEE, dd 'de' MMMM", { locale: es })}
                                     </Typography>
-                                    <Stack direction="row" alignItems="center" justifyContent="center" spacing={1}>
-                                        <Typography variant="body2" color="#8E8E93">
+                                    <Stack 
+                                        direction={{ xs: "column", sm: "row" }} 
+                                        alignItems="center" 
+                                        justifyContent="center" 
+                                        spacing={1}
+                                        sx={{ flexWrap: "wrap" }}
+                                    >
+                                        <Typography 
+                                            variant="body2" 
+                                            color="#8E8E93"
+                                            sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+                                        >
                                             Recomendación {currentDateIndex + 1} de {recommendedDates.length}
                                         </Typography>
                                         <Chip
@@ -239,7 +283,9 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                                             sx={{
                                                 backgroundColor: "#E8F5E8",
                                                 color: "#2E7D32",
-                                                fontWeight: 500
+                                                fontWeight: 500,
+                                                fontSize: { xs: "0.6rem", sm: "0.75rem" },
+                                                height: { xs: 20, sm: 24 }
                                             }}
                                         />
                                     </Stack>
@@ -248,52 +294,106 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                                 <IconButton
                                     onClick={handleNextDate}
                                     disabled={currentDateIndex === recommendedDates.length - 1}
+                                    size={window.innerWidth < 600 ? "small" : "medium"}
                                     sx={{
                                         backgroundColor: "white",
                                         border: "1px solid #E0E0E0",
                                         "&:hover": { backgroundColor: "#F5F5F5" },
-                                        "&:disabled": { backgroundColor: "#FAFAFA", color: "#C7C7CC" }
+                                        "&:disabled": { backgroundColor: "#FAFAFA", color: "#C7C7CC" },
+                                        width: { xs: 36, sm: 44 },
+                                        height: { xs: 36, sm: 44 }
                                     }}
                                 >
-                                    <NavigateNextIcon />
+                                    <NavigateNextIcon sx={{ fontSize: { xs: 18, sm: 24 } }} />
                                 </IconButton>
                             </Stack>
                         </Paper>
 
                         {/* Summary Cards */}
                         {currentRecommendation && (
-                            <Stack direction={{ xs: "column", md: "row" }} spacing={2} sx={{ mb: 3 }}>
+                            <Stack direction={{ xs: "column", sm: "row" }} spacing={{ xs: 1, sm: 2 }} sx={{ mb: { xs: 2, sm: 3 } }}>
                                 <Card elevation={0} sx={{ flex: 1, border: "1px solid #E8F5E8" }}>
-                                    <CardContent sx={{ textAlign: "center" }}>
-                                        <CheckIcon sx={{ fontSize: 32, color: "#28A745", mb: 1 }} />
-                                        <Typography variant="h3" fontWeight={700} color="#28A745">
+                                    <CardContent sx={{ 
+                                        textAlign: "center", 
+                                        p: { xs: 1.5, sm: 2 },
+                                        "&:last-child": { pb: { xs: 1.5, sm: 2 } }
+                                    }}>
+                                        <CheckIcon sx={{ 
+                                            fontSize: { xs: 24, sm: 32 }, 
+                                            color: "#28A745", 
+                                            mb: { xs: 0.5, sm: 1 } 
+                                        }} />
+                                        <Typography 
+                                            variant="h3" 
+                                            fontWeight={700} 
+                                            color="#28A745"
+                                            sx={{ fontSize: { xs: "1.5rem", sm: "2rem" } }}
+                                        >
                                             {currentRecommendation.counts.yes}
                                         </Typography>
-                                        <Typography variant="body2" color="#155724">
+                                        <Typography 
+                                            variant="body2" 
+                                            color="#155724"
+                                            sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+                                        >
                                             Disponibles
                                         </Typography>
                                     </CardContent>
                                 </Card>
 
                                 <Card elevation={0} sx={{ flex: 1, border: "1px solid #FFF3CD" }}>
-                                    <CardContent sx={{ textAlign: "center" }}>
-                                        <HelpIcon sx={{ fontSize: 32, color: "#FF9500", mb: 1 }} />
-                                        <Typography variant="h3" fontWeight={700} color="#FF9500">
+                                    <CardContent sx={{ 
+                                        textAlign: "center", 
+                                        p: { xs: 1.5, sm: 2 },
+                                        "&:last-child": { pb: { xs: 1.5, sm: 2 } }
+                                    }}>
+                                        <HelpIcon sx={{ 
+                                            fontSize: { xs: 24, sm: 32 }, 
+                                            color: "#FF9500", 
+                                            mb: { xs: 0.5, sm: 1 } 
+                                        }} />
+                                        <Typography 
+                                            variant="h3" 
+                                            fontWeight={700} 
+                                            color="#FF9500"
+                                            sx={{ fontSize: { xs: "1.5rem", sm: "2rem" } }}
+                                        >
                                             {currentRecommendation.counts.maybe}
                                         </Typography>
-                                        <Typography variant="body2" color="#856404">
+                                        <Typography 
+                                            variant="body2" 
+                                            color="#856404"
+                                            sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+                                        >
                                             Con esfuerzo
                                         </Typography>
                                     </CardContent>
                                 </Card>
 
                                 <Card elevation={0} sx={{ flex: 1, border: "1px solid #F8D7DA" }}>
-                                    <CardContent sx={{ textAlign: "center" }}>
-                                        <CancelIcon sx={{ fontSize: 32, color: "#FF3B30", mb: 1 }} />
-                                        <Typography variant="h3" fontWeight={700} color="#FF3B30">
+                                    <CardContent sx={{ 
+                                        textAlign: "center", 
+                                        p: { xs: 1.5, sm: 2 },
+                                        "&:last-child": { pb: { xs: 1.5, sm: 2 } }
+                                    }}>
+                                        <CancelIcon sx={{ 
+                                            fontSize: { xs: 24, sm: 32 }, 
+                                            color: "#FF3B30", 
+                                            mb: { xs: 0.5, sm: 1 } 
+                                        }} />
+                                        <Typography 
+                                            variant="h3" 
+                                            fontWeight={700} 
+                                            color="#FF3B30"
+                                            sx={{ fontSize: { xs: "1.5rem", sm: "2rem" } }}
+                                        >
                                             {currentRecommendation.counts.no}
                                         </Typography>
-                                        <Typography variant="body2" color="#721C24">
+                                        <Typography 
+                                            variant="body2" 
+                                            color="#721C24"
+                                            sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+                                        >
                                             No disponibles
                                         </Typography>
                                     </CardContent>

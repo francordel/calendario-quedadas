@@ -304,28 +304,47 @@ function Home() {
           </Stack>
 
           {/* Feature Highlights */}
-          <Box sx={{ mt: 8 }}>
+          <Box sx={{ mt: { xs: 6, md: 8 } }}>
             <Stack 
               direction={{ xs: "column", md: "row" }} 
-              spacing={4}
+              spacing={{ xs: 3, md: 4 }}
               justifyContent="center"
+              alignItems={{ xs: "center", md: "stretch" }}
+              sx={{ width: "100%" }}
             >
               <Paper
                 elevation={0}
                 sx={{
-                  p: 3,
+                  p: { xs: 2.5, md: 3 },
                   backgroundColor: "white",
                   border: "1px solid #E5E5EA",
-                  borderRadius: 2,
+                  borderRadius: 3,
                   textAlign: "center",
-                  flex: 1,
-                  maxWidth: 280,
+                  flex: { xs: "none", md: 1 },
+                  width: { xs: "100%", sm: "280px", md: "auto" },
+                  maxWidth: { xs: "320px", md: "280px" },
+                  minHeight: { xs: 120, md: 140 },
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
                 }}
               >
-                <Typography variant="h6" sx={{ fontWeight: 600, mb: 1, color: "#1C1C1E" }}>
+                <Typography 
+                  variant="h6" 
+                  sx={{ 
+                    fontWeight: 600, 
+                    mb: 1, 
+                    color: "#1C1C1E",
+                    fontSize: { xs: "1.1rem", md: "1.25rem" }
+                  }}
+                >
                   Sin contraseñas
                 </Typography>
-                <Typography variant="body2" color="#8E8E93">
+                <Typography 
+                  variant="body2" 
+                  color="#8E8E93"
+                  sx={{ fontSize: { xs: "0.875rem", md: "0.875rem" } }}
+                >
                   Acceso simple con IDs únicos generados automáticamente
                 </Typography>
               </Paper>
@@ -333,19 +352,36 @@ function Home() {
               <Paper
                 elevation={0}
                 sx={{
-                  p: 3,
+                  p: { xs: 2.5, md: 3 },
                   backgroundColor: "white",
                   border: "1px solid #E5E5EA",
-                  borderRadius: 2,
+                  borderRadius: 3,
                   textAlign: "center",
-                  flex: 1,
-                  maxWidth: 280,
+                  flex: { xs: "none", md: 1 },
+                  width: { xs: "100%", sm: "280px", md: "auto" },
+                  maxWidth: { xs: "320px", md: "280px" },
+                  minHeight: { xs: 120, md: 140 },
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
                 }}
               >
-                <Typography variant="h6" sx={{ fontWeight: 600, mb: 1, color: "#1C1C1E" }}>
+                <Typography 
+                  variant="h6" 
+                  sx={{ 
+                    fontWeight: 600, 
+                    mb: 1, 
+                    color: "#1C1C1E",
+                    fontSize: { xs: "1.1rem", md: "1.25rem" }
+                  }}
+                >
                   Interfaz intuitiva
                 </Typography>
-                <Typography variant="body2" color="#8E8E93">
+                <Typography 
+                  variant="body2" 
+                  color="#8E8E93"
+                  sx={{ fontSize: { xs: "0.875rem", md: "0.875rem" } }}
+                >
                   Diseño limpio y profesional optimizado para cualquier dispositivo
                 </Typography>
               </Paper>
@@ -353,19 +389,36 @@ function Home() {
               <Paper
                 elevation={0}
                 sx={{
-                  p: 3,
+                  p: { xs: 2.5, md: 3 },
                   backgroundColor: "white",
                   border: "1px solid #E5E5EA",
-                  borderRadius: 2,
+                  borderRadius: 3,
                   textAlign: "center",
-                  flex: 1,
-                  maxWidth: 280,
+                  flex: { xs: "none", md: 1 },
+                  width: { xs: "100%", sm: "280px", md: "auto" },
+                  maxWidth: { xs: "320px", md: "280px" },
+                  minHeight: { xs: 120, md: 140 },
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
                 }}
               >
-                <Typography variant="h6" sx={{ fontWeight: 600, mb: 1, color: "#1C1C1E" }}>
+                <Typography 
+                  variant="h6" 
+                  sx={{ 
+                    fontWeight: 600, 
+                    mb: 1, 
+                    color: "#1C1C1E",
+                    fontSize: { xs: "1.1rem", md: "1.25rem" }
+                  }}
+                >
                   Resultados inmediatos
                 </Typography>
-                <Typography variant="body2" color="#8E8E93">
+                <Typography 
+                  variant="body2" 
+                  color="#8E8E93"
+                  sx={{ fontSize: { xs: "0.875rem", md: "0.875rem" } }}
+                >
                   Visualiza disponibilidades y encuentra la mejor fecha al instante
                 </Typography>
               </Paper>
