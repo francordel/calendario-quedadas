@@ -495,19 +495,57 @@ function Calendar() {
                 return (
                   <Box className="calendar-month-nav" sx={{ p: 3 }}>
                     <IconButton
-                      className="calendar-nav-button"
                       onClick={() => props.onNavigate("PREV")}
+                      sx={{
+                        width: 44,
+                        height: 44,
+                        borderRadius: 3,
+                        backgroundColor: 'background.paper',
+                        border: 1,
+                        borderColor: 'divider',
+                        color: 'text.primary',
+                        '&:hover': {
+                          backgroundColor: 'action.hover',
+                          borderColor: 'text.secondary',
+                        },
+                        '&:active': {
+                          transform: 'scale(0.95)',
+                        },
+                      }}
                     >
                       <NavigateBeforeIcon />
                     </IconButton>
                     
-                    <Typography className="calendar-month-title">
+                    <Typography 
+                      sx={{
+                        fontSize: '20px',
+                        fontWeight: 600,
+                        color: 'text.primary',
+                        margin: 0,
+                        textAlign: 'center',
+                      }}
+                    >
                       {props.label}
                     </Typography>
 
                     <IconButton
-                      className="calendar-nav-button"
                       onClick={() => props.onNavigate("NEXT")}
+                      sx={{
+                        width: 44,
+                        height: 44,
+                        borderRadius: 3,
+                        backgroundColor: 'background.paper',
+                        border: 1,
+                        borderColor: 'divider',
+                        color: 'text.primary',
+                        '&:hover': {
+                          backgroundColor: 'action.hover',
+                          borderColor: 'text.secondary',
+                        },
+                        '&:active': {
+                          transform: 'scale(0.95)',
+                        },
+                      }}
                     >
                       <NavigateNextIcon />
                     </IconButton>
