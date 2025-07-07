@@ -1,81 +1,120 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { TextField, Button, Box, Typography, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
-import { calendarExists, createCalendar, checkCalendarPassword } from "../services";
+import { TextField, Button, Box, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Alert, CircularProgress } from "@mui/material";
+import { calendarExists, createCalendar, generateUniqueCalendarId } from "../services";
 
 function Home() {
   const [name, setName] = useState("");
   const [calendarId, setCalendarId] = useState("");
 
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
 
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-
-  const [isCreatingCalendar, setIsCreatingCalendar] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [generatedCalendarId, setGeneratedCalendarId] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const navigate = useNavigate();
 
-  const handleSubmit = async () => {
-    if (!name || !calendarId) return;
+  const handleCreateCalendarClick = () => {
+    setShowCreateDialog(true);
+  };
+
+  const handleLoginClick = () => {
+    setShowLoginDialog(true);
+  };
+
+  const handleCreateCalendarSubmit = async () => {
+    if (!name.trim()) {
+      setErrorMessage("Por favor, introduce tu nombre");
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMessage("");
+
+    try {
+      // Generate a unique calendar ID
+      const idResult = await generateUniqueCalendarId();
+      
+      if (!idResult.success) {
+        setErrorMessage(idResult.error || "Error al generar ID único");
+        setIsLoading(false);
+        return;
+      }
+
+      // Create the calendar
+      const createResult = await createCalendar(idResult.calendarId);
+      
+      if (!createResult.success) {
+        setErrorMessage(createResult.error || "Error al crear el calendario");
+        setIsLoading(false);
+        return;
+      }
+
+      // Success!
+      setGeneratedCalendarId(idResult.calendarId);
+      setShowCreateDialog(false);
+      setShowSuccessDialog(true);
+      setIsLoading(false);
+
+    } catch (error) {
+      console.error("Error creating calendar:", error);
+      setErrorMessage("Error inesperado al crear el calendario");
+      setIsLoading(false);
+    }
+  };
+
+  const handleLoginSubmit = async () => {
+    if (!name.trim() || !calendarId.trim()) {
+      setErrorMessage("Por favor, introduce tu nombre y el ID del calendario");
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMessage("");
 
     try {
       const exists = await calendarExists(calendarId);
       if (!exists) {
-        setIsCreatingCalendar(true);
-        setShowCreateDialog(true);
-      } else {
-        setIsCreatingCalendar(false);
-        setShowPasswordDialog(true);
-      }
-    } catch (error) {
-      console.error("Error al verificar el calendario:", error);
-    }
-  };
-
-  const handleCreateCalendar = () => {
-    setShowCreateDialog(false);
-    setShowPasswordDialog(true);
-  };
-
-  const handleCancelCreate = () => {
-    setShowCreateDialog(false);
-  };
-
-  const handlePasswordConfirm = async () => {
-    if (isCreatingCalendar) {
-      if (!password || !confirmPassword) return;
-      if (password !== confirmPassword) {
-        alert("Las contraseñas no coinciden.");
+        setErrorMessage("El calendario no existe. Verifica el ID o crea un nuevo calendario.");
+        setIsLoading(false);
         return;
       }
 
-      const created = await createCalendar(calendarId, password);
-      if (!created) {
-        alert("Error al crear el calendario.");
-        return;
-      }
-
-      setShowPasswordDialog(false);
+      // Calendar exists, navigate to it
       navigate(`/${calendarId}?name=${encodeURIComponent(name)}`);
-    } else {
-      if (!password) return;
-
-      const valid = await checkCalendarPassword(calendarId, password);
-      if (!valid) {
-        setShowPasswordDialog(false);
-        setShowErrorDialog(true);
-      } else {
-        setShowPasswordDialog(false);
-        navigate(`/${calendarId}?name=${encodeURIComponent(name)}`);
-      }
+    } catch (error) {
+      console.error("Error checking calendar:", error);
+      setErrorMessage("Error al verificar el calendario");
+      setIsLoading(false);
     }
+  };
+
+  const handleSuccessDialogClose = () => {
+    setShowSuccessDialog(false);
+    // Navigate to the created calendar
+    navigate(`/${generatedCalendarId}?name=${encodeURIComponent(name)}`);
+  };
+
+  const resetForm = () => {
+    setName("");
+    setCalendarId("");
+    setErrorMessage("");
+    setGeneratedCalendarId("");
+    setIsLoading(false);
+  };
+
+  const handleDialogClose = (dialogSetter) => {
+    dialogSetter(false);
+    resetForm();
   };
 
   const handleCloseError = () => {
     setShowErrorDialog(false);
+    setErrorMessage("");
   };
 
   return (
@@ -124,94 +163,136 @@ function Home() {
           Bienvenido al Calendario de Quedadas
         </Typography>
         <Typography variant="body1" sx={{ marginBottom: 4 }}>
-          Introduce tu nombre y el ID del calendario para comenzar.
+          Elige una opción para comenzar:
         </Typography>
-        <TextField
-          label="Tu Nombre"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          variant="outlined"
-          sx={{ marginBottom: 2, width: "100%" }}
-        />
-        <TextField
-          label="ID del Calendario"
-          value={calendarId}
-          onChange={(e) => setCalendarId(e.target.value)}
-          variant="outlined"
-          sx={{ marginBottom: 2, width: "100%" }}
-        />
         <Button
           variant="contained"
           color="primary"
-          onClick={handleSubmit}
+          onClick={handleCreateCalendarClick}
+          sx={{ width: "100%", marginBottom: 2 }}
+        >
+          Crear Calendario
+        </Button>
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={handleLoginClick}
           sx={{ width: "100%" }}
         >
-          Entrar
+          Ingresar a Calendario Existente
         </Button>
       </Box>
 
-      <Dialog open={showCreateDialog} onClose={handleCancelCreate}>
-        <DialogTitle>El calendario no existe</DialogTitle>
+      <Dialog open={showCreateDialog} onClose={() => handleDialogClose(setShowCreateDialog)} maxWidth="sm" fullWidth>
+        <DialogTitle>Crear Nuevo Calendario</DialogTitle>
         <DialogContent>
-          <Typography variant="body1">
-            ¿Deseas crear un nuevo calendario con el ID "{calendarId}"?
+          <Typography variant="body2" color="text.secondary" sx={{ marginBottom: 2 }}>
+            Introduce tu nombre para crear un nuevo calendario. Se generará automáticamente un ID único.
           </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCancelCreate}>No</Button>
-          <Button onClick={handleCreateCalendar} color="primary" variant="contained">Sí</Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog open={showPasswordDialog} onClose={() => setShowPasswordDialog(false)}>
-        <DialogTitle>
-          {isCreatingCalendar ? "Crea tu calendario" : "Introduce la contraseña"}
-        </DialogTitle>
-        <DialogContent>
-          {isCreatingCalendar ? (
-            <>
-              <TextField
-                label="Contraseña"
-                type="password"
-                variant="outlined"
-                fullWidth
-                sx={{ mb: 2 }}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <TextField
-                label="Confirmar Contraseña"
-                type="password"
-                variant="outlined"
-                fullWidth
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-            </>
-          ) : (
-            <TextField
-              label="Contraseña"
-              type="password"
-              variant="outlined"
-              fullWidth
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+          <TextField
+            label="Tu Nombre"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            variant="outlined"
+            fullWidth
+            sx={{ marginBottom: 2, marginTop: 1 }}
+            disabled={isLoading}
+          />
+          {errorMessage && (
+            <Alert severity="error" sx={{ marginBottom: 2 }}>
+              {errorMessage}
+            </Alert>
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setShowPasswordDialog(false)}>Cancelar</Button>
-          <Button onClick={handlePasswordConfirm} variant="contained" color="primary">
-            {isCreatingCalendar ? "Crear" : "Acceder"}
+          <Button onClick={() => handleDialogClose(setShowCreateDialog)} disabled={isLoading}>
+            Cancelar
+          </Button>
+          <Button 
+            onClick={handleCreateCalendarSubmit} 
+            variant="contained" 
+            color="primary"
+            disabled={isLoading || !name.trim()}
+            startIcon={isLoading ? <CircularProgress size={20} /> : null}
+          >
+            {isLoading ? "Creando..." : "Crear Calendario"}
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Dialog open={showLoginDialog} onClose={() => handleDialogClose(setShowLoginDialog)} maxWidth="sm" fullWidth>
+        <DialogTitle>Ingresar a Calendario Existente</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" sx={{ marginBottom: 2 }}>
+            Introduce tu nombre y el ID del calendario al que deseas acceder.
+          </Typography>
+          <TextField
+            label="Tu Nombre"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            variant="outlined"
+            fullWidth
+            sx={{ marginBottom: 2, marginTop: 1 }}
+            disabled={isLoading}
+          />
+          <TextField
+            label="ID del Calendario"
+            value={calendarId}
+            onChange={(e) => setCalendarId(e.target.value)}
+            variant="outlined"
+            fullWidth
+            sx={{ marginBottom: 2 }}
+            disabled={isLoading}
+            placeholder="ejemplo: amazing-calendar-123"
+          />
+          {errorMessage && (
+            <Alert severity="error" sx={{ marginBottom: 2 }}>
+              {errorMessage}
+            </Alert>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleDialogClose(setShowLoginDialog)} disabled={isLoading}>
+            Cancelar
+          </Button>
+          <Button 
+            onClick={handleLoginSubmit} 
+            variant="contained" 
+            color="primary"
+            disabled={isLoading || !name.trim() || !calendarId.trim()}
+            startIcon={isLoading ? <CircularProgress size={20} /> : null}
+          >
+            {isLoading ? "Verificando..." : "Ingresar"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={showSuccessDialog} onClose={handleSuccessDialogClose} maxWidth="sm" fullWidth>
+        <DialogTitle>¡Calendario Creado!</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1" sx={{ marginBottom: 2 }}>
+            Tu nuevo calendario se ha creado exitosamente.
+          </Typography>
+          <Alert severity="success" sx={{ marginBottom: 2 }}>
+            <strong>ID del Calendario:</strong> {generatedCalendarId}
+          </Alert>
+          <Typography variant="body2" color="text.secondary">
+            Comparte este ID con otras personas para que puedan acceder al calendario.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleSuccessDialogClose} variant="contained" color="primary">
+            Ir al Calendario
+          </Button>
+        </DialogActions>
+      </Dialog>
+
 
       <Dialog open={showErrorDialog} onClose={handleCloseError}>
         <DialogTitle>Error</DialogTitle>
         <DialogContent>
           <Typography variant="body1">
-            La contraseña introducida es incorrecta.
+            {errorMessage || "Ha ocurrido un error inesperado."}
           </Typography>
         </DialogContent>
         <DialogActions>

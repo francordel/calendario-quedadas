@@ -14,7 +14,7 @@ console.log("🧠 Modo de base de datos activo:", mode);
 export const {
   calendarExists,
   createCalendar,
-  checkCalendarPassword,
+  generateUniqueCalendarId,
   fetchCalendarSelections,
   saveUserSelections
 } = selected;

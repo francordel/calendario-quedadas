@@ -4,6 +4,27 @@ const API_BASE = isLocal
   ? "https://calendario-quedadas.pages.dev"
   : "";
 
+// Generate a random calendar ID with a readable format
+export const generateCalendarId = () => {
+  const adjectives = [
+    'amazing', 'bright', 'creative', 'dynamic', 'elegant', 'fantastic', 'gorgeous', 'happy',
+    'incredible', 'joyful', 'kind', 'lovely', 'magnificent', 'nice', 'outstanding', 'perfect',
+    'quality', 'radiant', 'stunning', 'terrific', 'unique', 'vibrant', 'wonderful', 'excellent'
+  ];
+  
+  const nouns = [
+    'calendar', 'meeting', 'event', 'schedule', 'planner', 'organizer', 'agenda', 'timeline',
+    'gather', 'connect', 'sync', 'plan', 'book', 'date', 'time', 'slot', 'space', 'room',
+    'session', 'appointment', 'conference', 'group', 'team', 'project'
+  ];
+  
+  const randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+  const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+  const randomNumber = Math.floor(Math.random() * 1000);
+  
+  return `${randomAdjective}-${randomNoun}-${randomNumber}`;
+};
+
 export const calendarExists = async (calendarId) => {
   console.log("📡 Verificando existencia:", calendarId);
   try {
@@ -26,55 +47,56 @@ export const calendarExists = async (calendarId) => {
 };
 
 
-export const createCalendar = async (calendarId, password) => {
+export const createCalendar = async (calendarId) => {
   console.log("📡 Creando calendario:", calendarId);
   try {
     const res = await fetch(`${API_BASE}/api/create-calendar`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ calendarId, password }),
+      body: JSON.stringify({ calendarId }),
     });
 
     const contentType = res.headers.get("content-type");
     if (!contentType?.includes("application/json")) {
       const raw = await res.text();
       console.error("❌ Respuesta no-JSON:", raw);
-      return false;
+      return { success: false, error: "Invalid response format" };
     }
 
     const data = await res.json();
     console.log("📥 Respuesta de creación:", data);
-    return data.ok;
+    return { success: data.ok, calendarId: data.calendarId, error: data.error };
   } catch (err) {
     console.error("❌ Error en createCalendar:", err);
-    return false;
+    return { success: false, error: err.message };
   }
 };
 
-export const checkCalendarPassword = async (calendarId, password) => {
-  console.log("📡 Verificando contraseña para:", calendarId);
-  try {
-    const res = await fetch(`${API_BASE}/api/check-password`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ calendarId, password }),
-    });
-
-    const contentType = res.headers.get("content-type");
-    if (!contentType?.includes("application/json")) {
-      const raw = await res.text();
-      console.error("❌ Respuesta no-JSON:", raw);
-      return false;
+// Generate a unique calendar ID by checking if it already exists
+export const generateUniqueCalendarId = async (maxAttempts = 10) => {
+  console.log("🎲 Generando ID único de calendario");
+  
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const calendarId = generateCalendarId();
+    console.log(`📝 Intento ${attempt}: ${calendarId}`);
+    
+    try {
+      const exists = await calendarExists(calendarId);
+      if (!exists) {
+        console.log("✅ ID único encontrado:", calendarId);
+        return { success: true, calendarId };
+      }
+      console.log("⚠️ ID ya existe, generando otro...");
+    } catch (err) {
+      console.error(`❌ Error verificando ID en intento ${attempt}:`, err);
     }
-
-    const data = await res.json();
-    console.log("📥 Respuesta de contraseña:", data);
-    return data.ok;
-  } catch (err) {
-    console.error("❌ Error en checkCalendarPassword:", err);
-    return false;
   }
+  
+  console.error("❌ No se pudo generar un ID único después de", maxAttempts, "intentos");
+  return { success: false, error: "No se pudo generar un ID único" };
 };
+
+// Password functionality removed - calendars are now open access
 
 export const fetchCalendarSelections = async (calendarId) => {
   console.log("📡 Obteniendo selecciones:", calendarId);
