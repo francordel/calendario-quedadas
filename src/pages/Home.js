@@ -21,7 +21,11 @@ import {
   Close as CloseIcon,
   ContentCopy as CopyIcon,
   Add as AddIcon,
-  Login as LoginIcon
+  Login as LoginIcon,
+  WhatsApp as WhatsAppIcon,
+  Telegram as TelegramIcon,
+  Share as ShareIcon,
+  Check as CheckIcon
 } from "@mui/icons-material";
 import { calendarExists, createCalendar, generateUniqueCalendarId } from "../services";
 
@@ -36,6 +40,7 @@ function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [generatedCalendarId, setGeneratedCalendarId] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [copySuccess, setCopySuccess] = useState(false);
 
   const navigate = useNavigate();
 
@@ -133,11 +138,58 @@ function Home() {
     resetForm();
   };
 
+  const getShareableLink = () => {
+    return `${window.location.origin}/${generatedCalendarId}`;
+  };
+
+  const getShareMessage = () => {
+    return `¡Te invito a coordinar nuestra reunión! 📅\n\nÚnete al calendario "${generatedCalendarId}" para elegir las fechas que mejor te vayan.\n\n${getShareableLink()}\n\n¡Es súper fácil y rápido! 🚀`;
+  };
+
   const copyToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(generatedCalendarId);
+      await navigator.clipboard.writeText(getShareableLink());
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
     } catch (err) {
       console.error('Failed to copy: ', err);
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = getShareableLink();
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    }
+  };
+
+  const shareWhatsApp = () => {
+    const message = encodeURIComponent(getShareMessage());
+    const whatsappUrl = `https://wa.me/?text=${message}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
+  const shareTelegram = () => {
+    const message = encodeURIComponent(getShareMessage());
+    const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(getShareableLink())}&text=${message}`;
+    window.open(telegramUrl, '_blank');
+  };
+
+  const shareNative = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Calendario de Quedadas',
+          text: 'Te invito a coordinar nuestra reunión',
+          url: getShareableLink(),
+        });
+      } catch (err) {
+        console.log('Error sharing:', err);
+      }
+    } else {
+      copyToClipboard();
     }
   };
 
@@ -564,40 +616,102 @@ function Home() {
         </DialogTitle>
         
         <DialogContent sx={{ textAlign: "center", pt: 2 }}>
+          {/* Link Display */}
           <Paper
             elevation={0}
             sx={{
               p: 3,
               backgroundColor: "#F0F9FF",
               border: "1px solid #007AFF",
-              borderRadius: 2,
+              borderRadius: 3,
               mb: 3,
             }}
           >
-            <Stack direction="row" alignItems="center" justifyContent="space-between">
-              <Box textAlign="left">
-                <Typography variant="body2" sx={{ color: "#007AFF", mb: 0.5, fontWeight: 500 }}>
-                  ID del calendario
-                </Typography>
-                <Typography variant="h6" sx={{ color: "#1C1C1E", fontWeight: 600, fontFamily: "monospace" }}>
-                  {generatedCalendarId}
-                </Typography>
-              </Box>
+            <Typography variant="body2" sx={{ color: "#007AFF", mb: 1, fontWeight: 500 }}>
+              Enlace del calendario
+            </Typography>
+            <Typography 
+              variant="body1" 
+              sx={{ 
+                color: "#1C1C1E", 
+                fontWeight: 500, 
+                fontSize: "0.9rem",
+                wordBreak: "break-all",
+                mb: 2,
+                p: 2,
+                backgroundColor: "rgba(255, 255, 255, 0.8)",
+                borderRadius: 2,
+              }}
+            >
+              {getShareableLink()}
+            </Typography>
+            
+            {/* Sharing Buttons */}
+            <Stack direction="row" spacing={1} justifyContent="center">
               <IconButton
                 onClick={copyToClipboard}
                 sx={{
-                  color: "#007AFF",
-                  backgroundColor: "rgba(0, 122, 255, 0.1)",
-                  "&:hover": { backgroundColor: "rgba(0, 122, 255, 0.2)" },
+                  color: copySuccess ? "#28A745" : "#007AFF",
+                  backgroundColor: copySuccess ? "rgba(40, 167, 69, 0.1)" : "rgba(0, 122, 255, 0.1)",
+                  "&:hover": { 
+                    backgroundColor: copySuccess ? "rgba(40, 167, 69, 0.2)" : "rgba(0, 122, 255, 0.2)" 
+                  },
+                  width: 44,
+                  height: 44,
                 }}
               >
-                <CopyIcon />
+                {copySuccess ? <CheckIcon /> : <CopyIcon />}
               </IconButton>
+              
+              <IconButton
+                onClick={shareWhatsApp}
+                sx={{
+                  color: "#25D366",
+                  backgroundColor: "rgba(37, 211, 102, 0.1)",
+                  "&:hover": { backgroundColor: "rgba(37, 211, 102, 0.2)" },
+                  width: 44,
+                  height: 44,
+                }}
+              >
+                <WhatsAppIcon />
+              </IconButton>
+              
+              <IconButton
+                onClick={shareTelegram}
+                sx={{
+                  color: "#0088CC",
+                  backgroundColor: "rgba(0, 136, 204, 0.1)",
+                  "&:hover": { backgroundColor: "rgba(0, 136, 204, 0.2)" },
+                  width: 44,
+                  height: 44,
+                }}
+              >
+                <TelegramIcon />
+              </IconButton>
+              
+              {navigator.share && (
+                <IconButton
+                  onClick={shareNative}
+                  sx={{
+                    color: "#8E8E93",
+                    backgroundColor: "rgba(142, 142, 147, 0.1)",
+                    "&:hover": { backgroundColor: "rgba(142, 142, 147, 0.2)" },
+                    width: 44,
+                    height: 44,
+                  }}
+                >
+                  <ShareIcon />
+                </IconButton>
+              )}
             </Stack>
           </Paper>
           
-          <Typography variant="body2" color="#8E8E93">
-            Comparte este ID con las personas que deseas invitar al calendario.
+          <Typography variant="body2" color="#8E8E93" sx={{ mb: 2 }}>
+            Comparte este enlace para que otros se unan al calendario
+          </Typography>
+          
+          <Typography variant="body2" color="#616161" sx={{ fontSize: "0.8rem" }}>
+            💡 En móvil, los iconos abrirán las aplicaciones correspondientes
           </Typography>
         </DialogContent>
         

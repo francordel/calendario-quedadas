@@ -18,7 +18,8 @@ import {
   Stack,
   Chip,
   Breadcrumbs,
-  Link
+  Link,
+  TextField
 } from "@mui/material";
 import {
   ArrowBack as ArrowBackIcon,
@@ -35,7 +36,7 @@ import "./Calendar.css";
 // Importamos las funciones de utilidad
 import { generateEvents, eventStyleGetter, dayPropGetter } from './CalendarUtils';
 import Recommendation from '../components/Recommendation';
-import { saveUserSelections } from '../services';
+import { saveUserSelections, getUserFromCalendar, fetchCalendarSelections } from '../services';
 
 const locales = { es };
 
@@ -60,6 +61,10 @@ function Calendar() {
   const [showRecommendation, setShowRecommendation] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [showNameDialog, setShowNameDialog] = useState(false);
+  const [tempUserName, setTempUserName] = useState('');
+  const [nameError, setNameError] = useState('');
+  const [allUsers, setAllUsers] = useState([]);
   const navigate = useNavigate();
 
   // Detect mobile device
@@ -73,6 +78,43 @@ function Calendar() {
     
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
+
+  // Check if user needs to enter their name
+  useEffect(() => {
+    if (!userName) {
+      setShowNameDialog(true);
+    }
+  }, [userName]);
+
+  // Load all users' data for the calendar
+  useEffect(() => {
+    const loadAllUsers = async () => {
+      if (!calendarId) return;
+      
+      try {
+        const users = await fetchCalendarSelections(calendarId);
+        setAllUsers(users);
+        
+        // Update events to show all users' selections
+        if (userName && selectedDays) {
+          const updatedEvents = generateEvents(selectedDays, handleEventClick, users, userName);
+          setEvents(updatedEvents);
+        }
+      } catch (error) {
+        console.error('Error loading users:', error);
+      }
+    };
+
+    loadAllUsers();
+  }, [calendarId, userName, selectedDays]);
+
+  // Update events when current user's selections change
+  useEffect(() => {
+    if (userName && selectedDays) {
+      const updatedEvents = generateEvents(selectedDays, handleEventClick, allUsers, userName);
+      setEvents(updatedEvents);
+    }
+  }, [selectedDays, allUsers, userName]);
 
   const handleSelectSlot = ({ start }) => {
     const today = new Date().setHours(0, 0, 0, 0);
@@ -128,7 +170,7 @@ function Calendar() {
       });
 
       updated[type].push(dateStr);
-      const updatedEvents = generateEvents(updated, handleEventClick);
+      const updatedEvents = generateEvents(updated, handleEventClick, allUsers, userName);
       setEvents(updatedEvents);
 
       return updated;
@@ -174,6 +216,37 @@ function Calendar() {
   };
 
   const counts = getSelectionCounts();
+
+  const handleNameSubmit = async () => {
+    if (!tempUserName.trim()) {
+      setNameError('Por favor, introduce tu nombre');
+      return;
+    }
+
+    setIsLoading(true);
+    setNameError('');
+
+    try {
+      // Check if user already exists in this calendar
+      const existingUser = await getUserFromCalendar(calendarId, tempUserName.trim());
+      
+      if (existingUser && existingUser.selectedDays) {
+        // User exists, load their existing data
+        setSelectedDays(existingUser.selectedDays);
+        const loadedEvents = generateEvents(existingUser.selectedDays, handleEventClick, allUsers, tempUserName.trim());
+        setEvents(loadedEvents);
+      }
+
+      // Update URL to include the name
+      navigate(`/${calendarId}?name=${encodeURIComponent(tempUserName.trim())}`, { replace: true });
+      setShowNameDialog(false);
+    } catch (error) {
+      console.error('Error checking user:', error);
+      setNameError('Error al acceder al calendario');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Box
@@ -318,8 +391,8 @@ function Calendar() {
             events={events}
             startAccessor="start"
             endAccessor="end"
-            selectable={!isMobile}
-            onSelectSlot={!isMobile ? handleSelectSlot : undefined}
+            selectable={true}
+            onSelectSlot={handleSelectSlot}
             views={["month"]}
             style={{
               height: "100%",
@@ -523,6 +596,101 @@ function Calendar() {
               }}
             >
               Cancelar
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Name Input Dialog */}
+        <Dialog 
+          open={showNameDialog} 
+          maxWidth="sm" 
+          fullWidth
+          disableEscapeKeyDown
+          PaperProps={{
+            sx: {
+              borderRadius: 3,
+              border: "1px solid #E5E5EA",
+            }
+          }}
+        >
+          <DialogTitle sx={{ 
+            textAlign: "center", 
+            fontWeight: 600,
+            color: "#1C1C1E",
+            pb: 2,
+            pt: 4,
+          }}>
+            <Typography variant="h5" fontWeight={700} sx={{ mb: 1 }}>
+              ¡Bienvenido al calendario!
+            </Typography>
+            <Typography variant="body2" color="#8E8E93">
+              {calendarId}
+            </Typography>
+          </DialogTitle>
+          
+          <DialogContent sx={{ pt: 2, pb: 2 }}>
+            <Typography variant="body1" color="#1C1C1E" textAlign="center" sx={{ mb: 3 }}>
+              Para comenzar, por favor introduce tu nombre
+            </Typography>
+            
+            <TextField
+              label="Tu nombre"
+              value={tempUserName}
+              onChange={(e) => {
+                setTempUserName(e.target.value);
+                setNameError('');
+              }}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  handleNameSubmit();
+                }
+              }}
+              variant="outlined"
+              fullWidth
+              disabled={isLoading}
+              error={!!nameError}
+              helperText={nameError}
+              autoFocus
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                  "&:hover fieldset": {
+                    borderColor: "#007AFF",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#007AFF",
+                  },
+                },
+              }}
+            />
+            
+            <Typography variant="body2" color="#8E8E93" textAlign="center" sx={{ mt: 2 }}>
+              💡 Si ya has participado antes, recuperaremos tus selecciones automáticamente
+            </Typography>
+          </DialogContent>
+          
+          <DialogActions sx={{ p: 3, pt: 1 }}>
+            <Button 
+              onClick={handleNameSubmit} 
+              variant="contained"
+              disabled={isLoading || !tempUserName.trim()}
+              fullWidth
+              size="large"
+              sx={{
+                backgroundColor: "#007AFF",
+                borderRadius: 2,
+                py: 1.5,
+                fontWeight: 500,
+                textTransform: "none",
+                "&:hover": {
+                  backgroundColor: "#0056CC",
+                },
+                "&:disabled": {
+                  backgroundColor: "#C7C7CC",
+                },
+              }}
+            >
+              {isLoading ? "Accediendo..." : "Continuar"}
             </Button>
           </DialogActions>
         </Dialog>

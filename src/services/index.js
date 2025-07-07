@@ -19,3 +19,15 @@ export const {
   saveUserSelections
 } = selected;
 
+// Helper function to get specific user data from calendar
+export const getUserFromCalendar = async (calendarId, userName) => {
+  try {
+    const allUsers = await fetchCalendarSelections(calendarId);
+    const user = allUsers.find(u => u.userId === userName);
+    return user || null;
+  } catch (error) {
+    console.error('Error getting user from calendar:', error);
+    return null;
+  }
+};
+

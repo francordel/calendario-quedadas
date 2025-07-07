@@ -57,12 +57,13 @@
   --space-16: 64px;
   --space-20: 80px;
   
-  /* Border Radius */
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-2xl: 20px;
+  /* Border Radius - More Curved */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+  --radius-3xl: 40px;
   
   /* Typography */
   --font-family: 'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
@@ -77,7 +78,7 @@
 .rbc-calendar {
   background: var(--color-background);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-md);
   font-family: var(--font-family);
   overflow: hidden;
@@ -142,7 +143,7 @@
   font-weight: var(--font-weight-medium);
   font-size: 15px;
   padding: var(--space-2);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-lg);
   transition: all 0.15s ease;
   display: inline-flex;
   align-items: center;
@@ -160,15 +161,15 @@
 /* Events - Professional Styling */
 .rbc-event {
   border: none !important;
-  border-radius: var(--radius-md) !important;
-  padding: var(--space-1) var(--space-2) !important;
+  border-radius: var(--radius-xl) !important;
+  padding: var(--space-2) var(--space-3) !important;
   font-weight: var(--font-weight-medium) !important;
   font-size: 11px !important;
   color: white !important;
   box-shadow: var(--shadow-sm) !important;
   transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
   cursor: pointer !important;
-  margin: 1px !important;
+  margin: 2px !important;
   text-align: center !important;
 }
 
@@ -271,7 +272,7 @@
 .calendar-nav-button {
   width: 44px;
   height: 44px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-2xl);
   background: var(--color-background);
   border: 1px solid var(--color-border);
   color: var(--color-text-primary);
@@ -301,8 +302,116 @@
   text-align: center;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
+/* Responsive Design - Comprehensive Device Support */
+
+/* Extra Large Desktops (1920px+) */
+@media (min-width: 1920px) {
+  .rbc-calendar {
+    border-radius: var(--radius-3xl);
+  }
+  
+  .rbc-date-cell {
+    min-height: 120px;
+  }
+  
+  .rbc-button-link {
+    font-size: 18px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+  
+  .rbc-event {
+    font-size: 14px !important;
+    padding: var(--space-3) var(--space-4) !important;
+  }
+  
+  .calendar-month-title {
+    font-size: 28px;
+  }
+  
+  .calendar-nav-button {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+/* Large Desktops (1200px - 1919px) */
+@media (min-width: 1200px) and (max-width: 1919px) {
+  .rbc-date-cell {
+    min-height: 100px;
+  }
+  
+  .rbc-button-link {
+    font-size: 16px;
+    min-width: 36px;
+    min-height: 36px;
+  }
+  
+  .rbc-event {
+    font-size: 12px !important;
+    padding: var(--space-2) var(--space-3) !important;
+  }
+  
+  .calendar-month-title {
+    font-size: 24px;
+  }
+  
+  .calendar-nav-button {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* Standard Laptops/Desktops (992px - 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .rbc-date-cell {
+    min-height: 90px;
+  }
+  
+  .rbc-button-link {
+    font-size: 15px;
+    min-width: 34px;
+    min-height: 34px;
+  }
+  
+  .calendar-month-title {
+    font-size: 22px;
+  }
+}
+
+/* Tablets Landscape (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .rbc-calendar {
+    border-radius: var(--radius-xl);
+  }
+  
+  .rbc-date-cell {
+    min-height: 80px;
+  }
+  
+  .rbc-button-link {
+    font-size: 14px;
+    min-width: 32px;
+    min-height: 32px;
+  }
+  
+  .rbc-event {
+    font-size: 11px !important;
+    padding: var(--space-2) var(--space-2) !important;
+  }
+  
+  .calendar-month-title {
+    font-size: 20px;
+  }
+  
+  .calendar-nav-button {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* Tablets Portrait & Large Phones (576px - 767px) */
+@media (min-width: 576px) and (max-width: 767px) {
   .rbc-calendar {
     border-radius: var(--radius-lg);
     margin: 0 var(--space-2);
@@ -310,6 +419,44 @@
   
   .rbc-header {
     padding: var(--space-3) var(--space-1);
+    font-size: 12px;
+  }
+  
+  .rbc-date-cell {
+    min-height: 70px;
+  }
+  
+  .rbc-button-link {
+    font-size: 14px;
+    min-width: 30px;
+    min-height: 30px;
+  }
+  
+  .rbc-event {
+    font-size: 10px !important;
+    padding: var(--space-1) var(--space-2) !important;
+    border-radius: var(--radius-md) !important;
+  }
+  
+  .calendar-month-title {
+    font-size: 18px;
+  }
+  
+  .calendar-nav-button {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+/* Standard Mobile Phones (480px - 575px) */
+@media (min-width: 480px) and (max-width: 575px) {
+  .rbc-calendar {
+    border-radius: var(--radius-lg);
+    margin: 0 var(--space-1);
+  }
+  
+  .rbc-header {
+    padding: var(--space-2) var(--space-1);
     font-size: 11px;
   }
   
@@ -318,19 +465,19 @@
   }
   
   .rbc-button-link {
-    font-size: 14px;
+    font-size: 13px;
     min-width: 28px;
     min-height: 28px;
   }
   
   .rbc-event {
-    font-size: 10px !important;
-    padding: 2px 6px !important;
+    font-size: 9px !important;
+    padding: var(--space-1) var(--space-1) !important;
     border-radius: var(--radius-sm) !important;
   }
   
   .calendar-month-title {
-    font-size: 18px;
+    font-size: 16px;
   }
   
   .calendar-nav-button {
@@ -339,24 +486,75 @@
   }
 }
 
-@media (max-width: 480px) {
+/* Small Mobile Phones (320px - 479px) */
+@media (max-width: 479px) {
+  .rbc-calendar {
+    border-radius: var(--radius-md);
+    margin: 0 var(--space-1);
+  }
+  
+  .rbc-header {
+    padding: var(--space-1) var(--space-1);
+    font-size: 10px;
+  }
+  
   .rbc-date-cell {
     min-height: 50px;
   }
   
   .rbc-button-link {
-    font-size: 13px;
+    font-size: 12px;
     min-width: 24px;
     min-height: 24px;
+    padding: var(--space-1);
   }
   
   .rbc-event {
-    font-size: 9px !important;
-    padding: 1px 4px !important;
+    font-size: 8px !important;
+    padding: 2px 4px !important;
+    border-radius: var(--radius-sm) !important;
+    margin: 1px !important;
   }
   
   .calendar-month-title {
-    font-size: 16px;
+    font-size: 14px;
+  }
+  
+  .calendar-nav-button {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* Ultra-wide monitors (2560px+) */
+@media (min-width: 2560px) {
+  .rbc-calendar {
+    max-width: 1800px;
+    margin: 0 auto;
+  }
+  
+  .rbc-date-cell {
+    min-height: 140px;
+  }
+  
+  .rbc-button-link {
+    font-size: 20px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+  
+  .rbc-event {
+    font-size: 16px !important;
+    padding: var(--space-4) var(--space-5) !important;
+  }
+  
+  .calendar-month-title {
+    font-size: 32px;
+  }
+  
+  .calendar-nav-button {
+    width: 60px;
+    height: 60px;
   }
 }
 

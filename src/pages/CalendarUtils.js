@@ -1,69 +1,122 @@
+// Pastel color palette for users
+const getUserColor = (userName, isCurrentUser = false) => {
+  const pastelColors = [
+    { bg: '#FFE4E1', text: '#8B0000', border: '#FFB6C1' }, // Light Pink
+    { bg: '#E6E6FA', text: '#4B0082', border: '#DDA0DD' }, // Light Lavender
+    { bg: '#F0FFFF', text: '#008B8B', border: '#AFEEEE' }, // Light Cyan
+    { bg: '#F5FFFA', text: '#006400', border: '#98FB98' }, // Light Mint
+    { bg: '#FFFAF0', text: '#FF8C00', border: '#FFDEAD' }, // Light Peach
+    { bg: '#F0F8FF', text: '#1E90FF', border: '#87CEEB' }, // Light Blue
+    { bg: '#FFF8DC', text: '#B8860B', border: '#F0E68C' }, // Light Yellow
+    { bg: '#F5F5DC', text: '#8B4513', border: '#DEB887' }, // Light Beige
+  ];
+
+  if (isCurrentUser) {
+    return { bg: '#E3F2FD', text: '#1976D2', border: '#90CAF9' }; // Current user blue
+  }
+
+  const hash = userName.split('').reduce((a, b) => {
+    a = ((a << 5) - a) + b.charCodeAt(0);
+    return a & a;
+  }, 0);
+  
+  return pastelColors[Math.abs(hash) % pastelColors.length];
+};
+
 // Genera los eventos a partir de los días seleccionados
-export const generateEvents = (days, handleEventClick) => {
-    console.log("Generando eventos...");
+export const generateEvents = (currentUserDays, handleEventClick, allUsers = [], currentUserName = '') => {
+    console.log("Generando eventos para todos los usuarios...");
     const newEvents = [];
-    Object.entries(days).forEach(([key, dates]) => {
+    
+    // Add current user's events
+    if (currentUserDays) {
+      Object.entries(currentUserDays).forEach(([key, dates]) => {
+        dates.forEach((date) => {
+          newEvents.push({
+            start: new Date(date),
+            end: new Date(date),
+            title: `${currentUserName} (Tú)`,
+            type: key,
+            className: `event-${key} current-user`,
+            isCurrentUser: true,
+            userName: currentUserName,
+            resource: {
+              type: key,
+              icon: key === "green" ? "✓" : key === "red" ? "✗" : "?",
+              description: key === "green" ? "Disponible para reunirse" : 
+                         key === "red" ? "No disponible" : "Disponible con esfuerzo",
+              isCurrentUser: true
+            }
+          });
+        });
+      });
+    }
+    
+    // Add other users' events
+    allUsers.forEach((user) => {
+      if (user.userId !== currentUserName && user.selectedDays) {
+        Object.entries(user.selectedDays).forEach(([key, dates]) => {
           dates.forEach((date) => {
             newEvents.push({
               start: new Date(date),
               end: new Date(date),
-              title: key === "green" ? "✓ Disponible" : key === "red" ? "✗ No disponible" : "? Quizás",
+              title: user.userId,
               type: key,
-              className: `event-${key}`,
-              // Enhanced event data for premium UX
+              className: `event-${key} other-user`,
+              isCurrentUser: false,
+              userName: user.userId,
               resource: {
                 type: key,
                 icon: key === "green" ? "✓" : key === "red" ? "✗" : "?",
                 description: key === "green" ? "Disponible para reunirse" : 
-                           key === "red" ? "No disponible" : "Disponible con esfuerzo"
+                           key === "red" ? "No disponible" : "Disponible con esfuerzo",
+                isCurrentUser: false
               }
             });
           });
         });
-        return newEvents;
-      };
+      }
+    });
+    
+    return newEvents;
+};
       
   
     
   
   // Establece los estilos y las acciones de los eventos
 export const eventStyleGetter = (event) => {
+    const userColors = getUserColor(event.userName, event.isCurrentUser);
+    
     const baseStyle = {
-      border: "none",
-      borderRadius: "12px",
-      color: "white",
-      fontWeight: "600",
-      fontSize: "12px",
+      border: `2px solid ${userColors.border}`,
+      borderRadius: "16px",
+      color: userColors.text,
+      backgroundColor: userColors.bg,
+      fontWeight: event.isCurrentUser ? "700" : "600",
+      fontSize: event.isCurrentUser ? "13px" : "11px",
       textAlign: "center",
-      padding: "6px 12px",
+      padding: "8px 12px",
       cursor: "pointer",
       position: "relative",
       overflow: "hidden",
-      backdropFilter: "blur(8px)",
-      WebkitBackdropFilter: "blur(8px)",
       transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-      boxShadow: "0 4px 16px rgba(0, 0, 0, 0.15)",
+      boxShadow: event.isCurrentUser ? 
+        "0 6px 20px rgba(25, 118, 210, 0.3)" : 
+        "0 3px 12px rgba(0, 0, 0, 0.1)",
       pointerEvents: "auto",
+      zIndex: event.isCurrentUser ? 10 : 5,
+      transform: event.isCurrentUser ? "scale(1.05)" : "scale(1)",
+      minHeight: "28px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      textShadow: "none",
     };
 
-    // Premium gradient backgrounds based on event type
-    let background;
-    switch (event.type) {
-      case "green":
-        background = "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)";
-        break;
-      case "red":
-        background = "linear-gradient(135deg, #fa709a 0%, #fee140 100%)";
-        break;
-      case "orange":
-        background = "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)";
-        break;
-      default:
-        background = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
-    }
 
     return { 
-      style: { ...baseStyle, background },
+      style: baseStyle,
       className: `rbc-event ${event.className || ''}`
     };
   };

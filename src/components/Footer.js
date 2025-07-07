@@ -6,14 +6,12 @@ import {
   Button, 
   Box, 
   Stack, 
-  Divider,
-  Link
+  Divider
 } from '@mui/material';
 import {
   Email as EmailIcon,
   Favorite as FavoriteIcon,
-  Code as CodeIcon,
-  Launch as LaunchIcon
+  Code as CodeIcon
 } from '@mui/icons-material';
 
 function Footer() {
@@ -66,27 +64,19 @@ function Footer() {
 
           {/* Center Section - Links */}
           <Stack direction="row" spacing={3} sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <Link
-              href="https://misintaxis5.wordpress.com"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Typography
+              variant="body2"
               sx={{
                 color: '#8E8E93',
-                textDecoration: 'none',
                 fontSize: '0.875rem',
                 fontWeight: 500,
                 display: 'flex',
                 alignItems: 'center',
                 gap: 0.5,
-                '&:hover': {
-                  color: '#007AFF',
-                  textDecoration: 'underline'
-                }
               }}
             >
-              MiSintaxis
-              <LaunchIcon sx={{ fontSize: 14 }} />
-            </Link>
+              ¿Tu empresa quiere publicitarse aquí?
+            </Typography>
 
             <Divider orientation="vertical" flexItem sx={{ borderColor: '#E5E5EA' }} />
 
@@ -128,27 +118,16 @@ function Footer() {
         <Box sx={{ display: { xs: 'flex', md: 'none' }, width: '100%' }}>
           <Stack spacing={2} sx={{ width: '100%' }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Link
-                href="https://misintaxis5.wordpress.com"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Typography
+                variant="body2"
                 sx={{
                   color: '#8E8E93',
-                  textDecoration: 'none',
-                  fontSize: '0.875rem',
+                  fontSize: '0.75rem',
                   fontWeight: 500,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 0.5,
-                  '&:hover': {
-                    color: '#007AFF',
-                    textDecoration: 'underline'
-                  }
                 }}
               >
-                MiSintaxis
-                <LaunchIcon sx={{ fontSize: 14 }} />
-              </Link>
+                ¿Tu empresa quiere publicitarse?
+              </Typography>
 
               <Typography
                 variant="body2"
