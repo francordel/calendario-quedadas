@@ -171,7 +171,23 @@ function Header() {
           <Stack direction="row" alignItems="center" spacing={2} sx={{ display: { xs: 'none', lg: 'flex' } }}>
             <Divider orientation="vertical" flexItem sx={{ mx: 1, borderColor: 'divider' }} />
             
-            <Stack direction="row" alignItems="center" spacing={1}>
+            <Stack 
+              direction="row" 
+              alignItems="center" 
+              spacing={1}
+              component="a"
+              href="https://francordel.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{
+                textDecoration: 'none',
+                cursor: 'pointer',
+                '&:hover': {
+                  opacity: 0.8,
+                },
+                transition: 'opacity 0.2s ease'
+              }}
+            >
               <Avatar
                 alt="Fran Cortés"
                 src="/images/FranCortes2.jpeg"
@@ -232,7 +248,7 @@ function Header() {
           </Stack>
 
           {/* Mobile Navigation */}
-          <Stack direction="row" spacing={1} sx={{ display: { xs: 'flex', md: 'none' } }}>
+          <Stack direction="row" spacing={0.5} sx={{ display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               onClick={() => navigate('/')}
               sx={{
@@ -242,6 +258,44 @@ function Header() {
             >
               <HomeIcon />
             </IconButton>
+            
+            {/* Mobile Language Selector */}
+            <Button
+              onClick={() => changeLanguage('es')}
+              sx={{
+                color: language === 'es' ? 'primary.main' : 'text.secondary',
+                fontWeight: language === 'es' ? 600 : 500,
+                textTransform: 'none',
+                px: 1,
+                minWidth: 'auto',
+                borderRadius: 1.5,
+                fontSize: '0.75rem',
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 122, 255, 0.04)',
+                  color: 'primary.main',
+                },
+              }}
+            >
+              ES
+            </Button>
+            <Button
+              onClick={() => changeLanguage('en')}
+              sx={{
+                color: language === 'en' ? 'primary.main' : 'text.secondary',
+                fontWeight: language === 'en' ? 600 : 500,
+                textTransform: 'none',
+                px: 1,
+                minWidth: 'auto',
+                borderRadius: 1.5,
+                fontSize: '0.75rem',
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 122, 255, 0.04)',
+                  color: 'primary.main',
+                },
+              }}
+            >
+              EN
+            </Button>
             
             {/* Mobile Theme Toggle */}
             <IconButton
