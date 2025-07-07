@@ -88,15 +88,51 @@ export const generateEvents = (currentUserDays, handleEventClick, allUsers = [],
 export const eventStyleGetter = (event) => {
     const userColors = getUserColor(event.userName, event.isCurrentUser);
     
+    // Responsive sizing based on screen width
+    const getResponsiveStyles = () => {
+      const isMobile = window.innerWidth <= 768;
+      const isTablet = window.innerWidth > 768 && window.innerWidth <= 1024;
+      const isDesktop = window.innerWidth > 1024;
+      
+      if (isMobile) {
+        return {
+          fontSize: event.isCurrentUser ? "11px" : "10px",
+          padding: "4px 6px",
+          minHeight: "24px",
+          borderRadius: "12px",
+          borderWidth: "1px",
+        };
+      } else if (isTablet) {
+        return {
+          fontSize: event.isCurrentUser ? "13px" : "12px",
+          padding: "6px 8px",
+          minHeight: "32px",
+          borderRadius: "14px",
+          borderWidth: "2px",
+        };
+      } else {
+        // Desktop and larger screens
+        return {
+          fontSize: event.isCurrentUser ? "15px" : "13px",
+          padding: "8px 12px",
+          minHeight: "36px",
+          borderRadius: "16px",
+          borderWidth: "2px",
+        };
+      }
+    };
+    
+    const responsiveStyles = getResponsiveStyles();
+    
     const baseStyle = {
-      border: `2px solid ${userColors.border}`,
-      borderRadius: "16px",
+      border: `${responsiveStyles.borderWidth} solid ${userColors.border}`,
+      borderRadius: responsiveStyles.borderRadius,
       color: userColors.text,
       backgroundColor: userColors.bg,
       fontWeight: event.isCurrentUser ? "700" : "600",
-      fontSize: event.isCurrentUser ? "13px" : "11px",
+      fontSize: responsiveStyles.fontSize,
       textAlign: "center",
-      padding: "8px 12px",
+      padding: responsiveStyles.padding,
       cursor: "pointer",
       position: "relative",
       overflow: "hidden",
@@ -107,13 +143,15 @@ export const eventStyleGetter = (event) => {
       pointerEvents: "auto",
       zIndex: event.isCurrentUser ? 10 : 5,
       transform: event.isCurrentUser ? "scale(1.05)" : "scale(1)",
-      minHeight: "28px",
+      minHeight: responsiveStyles.minHeight,
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
       textShadow: "none",
+      lineHeight: "1.2",
+      wordBreak: "break-word",
+      maxWidth: "100%",
     };
-
 
     return { 
       style: baseStyle,

@@ -124,6 +124,19 @@ function Calendar() {
     }
   }, [selectedDays, allUsers, userName]);
 
+  // Force re-render of events on window resize for responsive styling
+  useEffect(() => {
+    const handleResize = () => {
+      if (userName && selectedDays) {
+        const updatedEvents = generateEvents(selectedDays, handleEventClick, allUsers, userName);
+        setEvents(updatedEvents);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [selectedDays, allUsers, userName]);
+
   const handleSelectSlot = ({ start }) => {
     const today = new Date().setHours(0, 0, 0, 0);
     if (start >= today) {
@@ -520,9 +533,10 @@ function Calendar() {
                       sx={{
                         fontSize: '20px',
                         fontWeight: 600,
-                        color: 'text.primary',
+                        color: 'text.primary !important',
                         margin: 0,
                         textAlign: 'center',
+                        fontFamily: "'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
                       }}
                     >
                       {props.label}
