@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "../contexts/LanguageContext";
+import { useThemeMode } from "../contexts/ThemeContext";
 import { Calendar as BigCalendar, dateFnsLocalizer } from "react-big-calendar";
 import { es } from "date-fns/locale";
 import { format, parse, startOfWeek, getDay } from "date-fns";
@@ -55,6 +56,7 @@ const localizer = dateFnsLocalizer({
 
 function Calendar() {
   const { t } = useLanguage();
+  const { isDark } = useThemeMode();
   const { calendarId } = useParams();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -533,10 +535,12 @@ function Calendar() {
                       sx={{
                         fontSize: '20px',
                         fontWeight: 600,
-                        color: 'text.primary !important',
+                        color: (theme) => theme.palette.text.primary + ' !important',
                         margin: 0,
                         textAlign: 'center',
                         fontFamily: "'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
+                        position: 'relative',
+                        zIndex: 1000,
                       }}
                     >
                       {props.label}
