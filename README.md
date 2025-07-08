@@ -1,4 +1,5 @@
-# Calendario de Quedadas
+# Calendario de Quedadas [kdemos.com](https://kdemos.com)
+
 
 Este es un proyecto de React para organizar quedadas entre amigos. Los usuarios pueden seleccionar los días en los que están disponibles para quedar, indicar qué días no pueden, y ver recomendaciones basadas en la disponibilidad de otros usuarios. Los datos de los usuarios se guardan y procesan en Firebase o mediante Workers de Cloudflare Pages, permitiendo a varios usuarios interactuar con el mismo calendario.
 
