@@ -62,7 +62,6 @@ function Calendar() {
   const queryParams = new URLSearchParams(location.search);
   const userName = queryParams.get('name');
   const [selectedDays, setSelectedDays] = useState({ green: [], red: [], orange: [] });
-  const [step, setStep] = useState(1);
   const [popupDate, setPopupDate] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [showRecommendation, setShowRecommendation] = useState(false);
@@ -159,32 +158,24 @@ function Calendar() {
     setOpenDialog(true);
   };
 
-  const handleContinue = async () => {
-    if (step === 1) {
-      setStep(2);
-    } else {
-      try {
-        setIsLoading(true);
-        await saveUserSelections(userName, calendarId, selectedDays);
-        setShowRecommendation(true);
-        // Show share dialog after completing voting
-        setTimeout(() => {
-          setShowShareDialog(true);
-        }, 2000);
-      } catch (error) {
-        console.error("Error al guardar las selecciones:", error);
-      } finally {
-        setIsLoading(false);
-      }
+  const handleFinish = async () => {
+    try {
+      setIsLoading(true);
+      await saveUserSelections(userName, calendarId, selectedDays);
+      setShowRecommendation(true);
+      // Show share dialog after completing voting
+      setTimeout(() => {
+        setShowShareDialog(true);
+      }, 2000);
+    } catch (error) {
+      console.error("Error al guardar las selecciones:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleBack = () => {
-    if (step === 2) {
-      setStep(1);
-    } else {
-      navigate('/');
-    }
+    navigate('/');
   };
 
   const getSelectionCounts = () => {
@@ -342,11 +333,11 @@ function Calendar() {
               <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
                 <PersonIcon sx={{ fontSize: 16, color: "#8E8E93" }} />
                 <Typography variant="body2" color="#8E8E93">
-                  {userName} • {t('step')} {step} {t('stepOf')} 2
+                  {userName}
                 </Typography>
               </Stack>
               <Typography variant="body1" color="#616161" sx={{ maxWidth: 600 }}>
-                {step === 1 ? t('stepOneDesc') : t('stepTwoDesc')}
+                {t('stepOneDesc')}
               </Typography>
             </Box>
 
@@ -718,13 +709,13 @@ function Calendar() {
                 },
               }}
             >
-              {step === 1 ? t('backToHome') : t('previousStep')}
+              {t('backToHome')}
             </Button>
             
             <Button
               variant="contained"
               size="large"
-              onClick={handleContinue}
+              onClick={handleFinish}
               disabled={isLoading}
               sx={{
                 backgroundColor: "#007AFF",
@@ -743,7 +734,7 @@ function Calendar() {
                 },
               }}
             >
-              {isLoading ? t('saving') : step === 1 ? t('continue') : t('finish')}
+              {isLoading ? t('Saving') : t('Recommendation')}
             </Button>
           </Stack>
         </Paper>
