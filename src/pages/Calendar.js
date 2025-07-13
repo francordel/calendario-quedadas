@@ -734,7 +734,7 @@ function Calendar() {
                 },
               }}
             >
-              {isLoading ? t('Saving') : t('Recommendation')}
+              {isLoading ? t('saving') : t('finish')}
             </Button>
           </Stack>
         </Paper>

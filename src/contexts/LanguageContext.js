@@ -56,7 +56,7 @@ const translations = {
     // Buttons
     cancel: 'Cancelar',
     continue: 'Continuar',
-    finish: 'Finalizar',
+    recommendation: 'Recomendar',
     close: 'Cerrar',
     contact: 'Contacto',
     create: 'Crear',
@@ -76,12 +76,17 @@ const translations = {
     // Recommendations
     recommendedDates: 'Fechas Recomendadas',
     recommendedDatesDesc: 'Basado en las disponibilidades del equipo',
-    analyzing: 'Analizando disponibilidades...',
+    analyzing: 'Analizando disponibilidades...', 
+    analyzingAvailabilities: 'Analizando disponibilidades...', 
     noAvailableDates: 'No hay fechas disponibles',
     noAvailableDatesDesc: 'No se encontraron fechas con disponibilidad positiva.',
+    noPositiveAvailability: 'No se encontraron fechas con disponibilidad positiva.',
     recommendation: 'Recomendación',
+    saving: 'Guardando',
+    of: 'de',
     score: 'Puntuación',
     detailedBreakdown: 'Desglose por persona',
+    breakdownByPerson: 'Desglose por persona',
     availableWithEffort: 'Disponibles con esfuerzo',
     
     // Footer
@@ -102,10 +107,10 @@ const translations = {
     mobileAppsHint: '💡 En móvil, los iconos abrirán las aplicaciones correspondientes',
     
     // Loading states
-    creating: 'Creando...',
-    accessing: 'Accediendo...',
-    saving: 'Guardando...',
-    verifying: 'Verificando...',
+    creating: 'Creando...', 
+    accessing: 'Accediendo...', 
+    saving: 'Guardando...', 
+    verifying: 'Verificando...', 
     
     // Calendar vote display
     you: 'tú',
@@ -145,7 +150,7 @@ const translations = {
     step: 'Step',
     stepOf: 'of',
     stepOneDesc: 'Select your availability by clicking on each day. On mobile, simply tap the day.',
-    stepTwoDesc: 'Review your selections and finish when you are satisfied.',
+    stepTwoDesc: 'Review your selections and recommendation when you are satisfied.',
     available: 'Available',
     availablePlural: 'Available',
     maybe: 'Maybe',
@@ -157,7 +162,8 @@ const translations = {
     // Buttons
     cancel: 'Cancel',
     continue: 'Continue',
-    finish: 'Finish',
+    recommendation: 'Recommendation',
+    saving: 'Saving',
     close: 'Close',
     contact: 'Contact',
     create: 'Create',
@@ -177,12 +183,16 @@ const translations = {
     // Recommendations
     recommendedDates: 'Recommended Dates',
     recommendedDatesDesc: 'Based on team availability',
-    analyzing: 'Analyzing availability...',
+    analyzing: 'Analyzing availability...', 
+    analyzingAvailabilities: 'Analyzing availabilities...', 
     noAvailableDates: 'No available dates',
     noAvailableDatesDesc: 'No dates with positive availability found.',
+    noPositiveAvailability: 'No dates with positive availability found.',
     recommendation: 'Recommendation',
+    of: 'of',
     score: 'Score',
     detailedBreakdown: 'Breakdown by person',
+    breakdownByPerson: 'Breakdown by person',
     availableWithEffort: 'Available with effort',
     
     // Footer
@@ -203,10 +213,10 @@ const translations = {
     mobileAppsHint: '💡 On mobile, the icons will open the corresponding apps',
     
     // Loading states
-    creating: 'Creating...',
-    accessing: 'Accessing...',
-    saving: 'Saving...',
-    verifying: 'Verifying...',
+    creating: 'Creating...', 
+    accessing: 'Accessing...', 
+    saving: 'Saving...', 
+    verifying: 'Verifying...', 
     
     // Calendar vote display
     you: 'you',

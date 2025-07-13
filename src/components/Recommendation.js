@@ -31,9 +31,11 @@ import {
 } from '@mui/icons-material';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { useLanguage } from '../contexts/LanguageContext';
 import { fetchCalendarSelections } from '../services';
 
 const Recommendation = ({ calendarId, currentUserName, currentUserSelections, onClose }) => {
+    const { t } = useLanguage();
     const [loading, setLoading] = useState(true);
     const [recommendedDates, setRecommendedDates] = useState([]);
     const [currentDateIndex, setCurrentDateIndex] = useState(0);
@@ -173,14 +175,14 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                                 color="#1C1C1E"
                                 sx={{ fontSize: { xs: "1.25rem", sm: "1.5rem" } }}
                             >
-                                Fechas Recomendadas
+                                {t('recommendedDates')}
                             </Typography>
                             <Typography 
                                 variant="body2" 
                                 color="#8E8E93"
                                 sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
                             >
-                                Basado en las disponibilidades del equipo
+                                {t('basedOnAvailability')}
                             </Typography>
                         </Box>
                     </Stack>
@@ -200,7 +202,7 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                             color="#8E8E93"
                             sx={{ fontSize: { xs: "0.875rem", sm: "1rem" } }}
                         >
-                            Analizando disponibilidades...
+                            {t('analyzingAvailabilities')}
                         </Typography>
                     </Box>
                 ) : recommendedDates.length === 0 ? (
@@ -211,13 +213,13 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                             color="#1C1C1E" 
                             sx={{ mb: 1, fontSize: { xs: "1.125rem", sm: "1.25rem" } }}
                         >
-                            No hay fechas disponibles
+                            {t('noAvailableDates')}
                         </Typography>
                         <Typography 
                             color="#8E8E93"
                             sx={{ fontSize: { xs: "0.875rem", sm: "1rem" } }}
                         >
-                            No se encontraron fechas con disponibilidad positiva.
+                            {t('noPositiveAvailability')}
                         </Typography>
                     </Box>
                 ) : (
@@ -275,10 +277,10 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                                             color="#8E8E93"
                                             sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
                                         >
-                                            Recomendación {currentDateIndex + 1} de {recommendedDates.length}
+                                            {t('recommendation')} {currentDateIndex + 1} {t('of')} {recommendedDates.length}
                                         </Typography>
                                         <Chip
-                                            label={`Puntuación: ${currentRecommendation?.score.toFixed(1)}`}
+                                            label={`${t('score')}: ${currentRecommendation?.score.toFixed(1)}`}
                                             size="small"
                                             sx={{
                                                 backgroundColor: "#E8F5E8",
@@ -336,7 +338,7 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                                             color="#155724"
                                             sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
                                         >
-                                            Disponibles
+                                            {t('available')}
                                         </Typography>
                                     </CardContent>
                                 </Card>
@@ -365,7 +367,7 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                                             color="#856404"
                                             sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
                                         >
-                                            Con esfuerzo
+                                            {t('maybe')}
                                         </Typography>
                                     </CardContent>
                                 </Card>
@@ -394,7 +396,7 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                                             color="#721C24"
                                             sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
                                         >
-                                            No disponibles
+                                            {t('notAvailable')}
                                         </Typography>
                                     </CardContent>
                                 </Card>
@@ -413,7 +415,7 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                             >
                                 <Box sx={{ p: 2, backgroundColor: "#FAFAFA", borderBottom: "1px solid #E5E5EA" }}>
                                     <Typography variant="h6" fontWeight={600} color="#1C1C1E">
-                                        Desglose por persona
+                                        {t('breakdownByPerson')}
                                     </Typography>
                                 </Box>
 
@@ -424,7 +426,7 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                                                 <Stack direction="row" alignItems="center" spacing={1}>
                                                     <CheckIcon sx={{ fontSize: 20, color: "#28A745" }} />
                                                     <Typography variant="subtitle1" fontWeight={600} color="#28A745">
-                                                        Disponibles
+                                                        {t('available')}
                                                     </Typography>
                                                 </Stack>
                                             </Box>
@@ -462,7 +464,7 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                                                 <Stack direction="row" alignItems="center" spacing={1}>
                                                     <HelpIcon sx={{ fontSize: 20, color: "#FF9500" }} />
                                                     <Typography variant="subtitle1" fontWeight={600} color="#FF9500">
-                                                        Disponibles con esfuerzo
+                                                        {t('maybe')}
                                                     </Typography>
                                                 </Stack>
                                             </Box>
@@ -500,7 +502,7 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                                                 <Stack direction="row" alignItems="center" spacing={1}>
                                                     <CancelIcon sx={{ fontSize: 20, color: "#FF3B30" }} />
                                                     <Typography variant="subtitle1" fontWeight={600} color="#FF3B30">
-                                                        No disponibles
+                                                        {t('notAvailable')}
                                                     </Typography>
                                                 </Stack>
                                             </Box>
@@ -555,7 +557,7 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                         },
                     }}
                 >
-                    Cerrar
+                    {t('close')}
                 </Button>
             </DialogActions>
         </Dialog>
