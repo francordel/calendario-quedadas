@@ -33,9 +33,11 @@ import { format } from 'date-fns';
 import { es, enUS } from 'date-fns/locale';
 import { useLanguage } from '../contexts/LanguageContext';
 import { fetchCalendarSelections } from '../services';
+import { useTheme } from '@mui/material/styles';
 
 const Recommendation = ({ calendarId, currentUserName, currentUserSelections, onClose }) => {
     const { t, language } = useLanguage();
+    const theme = useTheme();
     const [loading, setLoading] = useState(true);
     const [recommendedDates, setRecommendedDates] = useState([]);
     const [currentDateIndex, setCurrentDateIndex] = useState(0);
@@ -73,7 +75,9 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
             setLoading(true);
             
             // Fetch all user selections
-            const allUserSelections = await fetchCalendarSelections(calendarId);
+            let allUserSelections = await fetchCalendarSelections(calendarId);
+            // Remove any existing entry for the current user
+            allUserSelections = allUserSelections.filter(user => user.userId !== currentUserName);
             
             // Include current user selections
             const currentUserData = {
@@ -132,6 +136,9 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
     }, [analyzeDates]);
 
     const currentRecommendation = recommendedDates[currentDateIndex];
+
+    // Helper to ensure unique users in breakdown
+    const unique = arr => Array.from(new Set(arr));
 
     return (
         <Dialog 
@@ -230,7 +237,7 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                             sx={{
                                 p: { xs: 2, sm: 3 },
                                 mb: { xs: 2, sm: 3 },
-                                backgroundColor: "#FAFAFA",
+                                backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.paper : "#FAFAFA",
                                 border: "1px solid #E5E5EA",
                                 borderRadius: 2,
                             }}
@@ -241,10 +248,10 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                                     disabled={currentDateIndex === 0}
                                     size={window.innerWidth < 600 ? "small" : "medium"}
                                     sx={{
-                                        backgroundColor: "white",
+                                        backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.default : "white",
                                         border: "1px solid #E0E0E0",
-                                        "&:hover": { backgroundColor: "#F5F5F5" },
-                                        "&:disabled": { backgroundColor: "#FAFAFA", color: "#C7C7CC" },
+                                        "&:hover": { backgroundColor: theme.palette.mode === 'dark' ? theme.palette.action.hover : "#F5F5F5" },
+                                        "&:disabled": { backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.paper : "#FAFAFA", color: "#C7C7CC" },
                                         width: { xs: 36, sm: 44 },
                                         height: { xs: 36, sm: 44 }
                                     }}
@@ -302,10 +309,10 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                                     disabled={currentDateIndex === recommendedDates.length - 1}
                                     size={window.innerWidth < 600 ? "small" : "medium"}
                                     sx={{
-                                        backgroundColor: "white",
+                                        backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.default : "white",
                                         border: "1px solid #E0E0E0",
-                                        "&:hover": { backgroundColor: "#F5F5F5" },
-                                        "&:disabled": { backgroundColor: "#FAFAFA", color: "#C7C7CC" },
+                                        "&:hover": { backgroundColor: theme.palette.mode === 'dark' ? theme.palette.action.hover : "#F5F5F5" },
+                                        "&:disabled": { backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.paper : "#FAFAFA", color: "#C7C7CC" },
                                         width: { xs: 36, sm: 44 },
                                         height: { xs: 36, sm: 44 }
                                     }}
@@ -417,16 +424,16 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                                     overflow: "hidden"
                                 }}
                             >
-                                <Box sx={{ p: 2, backgroundColor: "#FAFAFA", borderBottom: "1px solid #E5E5EA" }}>
+                                <Box sx={{ p: 2, backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.paper : "#FAFAFA", borderBottom: "1px solid #E5E5EA" }}>
                                     <Typography variant="h6" fontWeight={600} color="#1C1C1E">
                                         {t('breakdownByPerson')}
                                     </Typography>
                                 </Box>
 
                                 <Box sx={{ p: 0 }}>
-                                    {currentRecommendation.details.available.length > 0 && (
+                                    {unique(currentRecommendation.details.available).length > 0 && (
                                         <Box>
-                                            <Box sx={{ p: 2, backgroundColor: "#F8F9FA" }}>
+                                            <Box sx={{ p: 2, backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.default : "#F8F9FA" }}>
                                                 <Stack direction="row" alignItems="center" spacing={1}>
                                                     <CheckIcon sx={{ fontSize: 20, color: "#28A745" }} />
                                                     <Typography variant="subtitle1" fontWeight={600} color="#28A745">
@@ -435,7 +442,7 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                                                 </Stack>
                                             </Box>
                                             <List sx={{ py: 0 }}>
-                                                {currentRecommendation.details.available.map((user, index) => (
+                                                {unique(currentRecommendation.details.available).map((user, index) => (
                                                     <ListItem key={index} sx={{ borderBottom: "1px solid #F2F2F7" }}>
                                                         <ListItemIcon>
                                                             <Box
@@ -462,9 +469,9 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                                         </Box>
                                     )}
 
-                                    {currentRecommendation.details.maybe.length > 0 && (
+                                    {unique(currentRecommendation.details.maybe).length > 0 && (
                                         <Box>
-                                            <Box sx={{ p: 2, backgroundColor: "#F8F9FA" }}>
+                                            <Box sx={{ p: 2, backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.default : "#F8F9FA" }}>
                                                 <Stack direction="row" alignItems="center" spacing={1}>
                                                     <HelpIcon sx={{ fontSize: 20, color: "#FF9500" }} />
                                                     <Typography variant="subtitle1" fontWeight={600} color="#FF9500">
@@ -473,7 +480,7 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                                                 </Stack>
                                             </Box>
                                             <List sx={{ py: 0 }}>
-                                                {currentRecommendation.details.maybe.map((user, index) => (
+                                                {unique(currentRecommendation.details.maybe).map((user, index) => (
                                                     <ListItem key={index} sx={{ borderBottom: "1px solid #F2F2F7" }}>
                                                         <ListItemIcon>
                                                             <Box
@@ -500,9 +507,9 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                                         </Box>
                                     )}
 
-                                    {currentRecommendation.details.unavailable.length > 0 && (
+                                    {unique(currentRecommendation.details.unavailable).length > 0 && (
                                         <Box>
-                                            <Box sx={{ p: 2, backgroundColor: "#F8F9FA" }}>
+                                            <Box sx={{ p: 2, backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.default : "#F8F9FA" }}>
                                                 <Stack direction="row" alignItems="center" spacing={1}>
                                                     <CancelIcon sx={{ fontSize: 20, color: "#FF3B30" }} />
                                                     <Typography variant="subtitle1" fontWeight={600} color="#FF3B30">
@@ -511,7 +518,7 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                                                 </Stack>
                                             </Box>
                                             <List sx={{ py: 0 }}>
-                                                {currentRecommendation.details.unavailable.map((user, index) => (
+                                                {unique(currentRecommendation.details.unavailable).map((user, index) => (
                                                     <ListItem key={index} sx={{ borderBottom: "1px solid #F2F2F7" }}>
                                                         <ListItemIcon>
                                                             <Box
