@@ -203,19 +203,18 @@ function Home() {
         alignItems: "center",
         justifyContent: "center",
         position: "relative",
-        py: { xs: 4, md: 8 },
+        py: { xs: 1, md: 2 }, // antes: { xs: 4, md: 8 }
       }}
     >
       <Container maxWidth="md">
         <Box
           sx={{
             textAlign: "center",
-            py: { xs: 4, md: 8 },
+            py: { xs: 2, md: 4 }, // antes: { xs: 4, md: 8 }
           }}
         >
-          
           {/* Hero Section */}
-          <Box sx={{ mb: 6 }}>
+          <Box sx={{ mb: 3 }}> {/* antes: mb: 6 */}
             <Typography
               variant="h1"
               component="h1"
@@ -230,7 +229,6 @@ function Home() {
             >
               {t('appTitle')}
             </Typography>
-            
             <Typography
               variant="h6"
               sx={{
@@ -240,7 +238,7 @@ function Home() {
                 lineHeight: 1.5,
                 maxWidth: 600,
                 mx: "auto",
-                mb: 6,
+                mb: 4, // antes: mb: 6
               }}
             >
               {t('appSubtitle')}
