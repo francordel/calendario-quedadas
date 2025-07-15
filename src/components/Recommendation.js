@@ -179,7 +179,7 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                             <Typography 
                                 variant="h5" 
                                 fontWeight={600} 
-                                color="#1C1C1E"
+                                color={theme.palette.mode === 'dark' ? '#FFF' : '#1C1C1E'}
                                 sx={{ fontSize: { xs: "1.25rem", sm: "1.5rem" } }}
                             >
                                 {t('recommendedDates')}
@@ -263,7 +263,7 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                                     <Typography 
                                         variant="h4" 
                                         fontWeight={700} 
-                                        color="#1C1C1E" 
+                                        color={theme.palette.mode === 'dark' ? '#FFF' : '#1C1C1E'}
                                         sx={{ 
                                             mb: 0.5,
                                             fontSize: { xs: "1rem", sm: "1.5rem" },
@@ -425,7 +425,7 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                                 }}
                             >
                                 <Box sx={{ p: 2, backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.paper : "#FAFAFA", borderBottom: "1px solid #E5E5EA" }}>
-                                    <Typography variant="h6" fontWeight={600} color="#1C1C1E">
+                                    <Typography variant="h6" fontWeight={600} color={theme.palette.mode === 'dark' ? '#FFF' : '#1C1C1E'}>
                                         {t('breakdownByPerson')}
                                     </Typography>
                                 </Box>
