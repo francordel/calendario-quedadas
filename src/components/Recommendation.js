@@ -30,12 +30,12 @@ import {
   TrendingUp as TrendingUpIcon
 } from '@mui/icons-material';
 import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { es, enUS } from 'date-fns/locale';
 import { useLanguage } from '../contexts/LanguageContext';
 import { fetchCalendarSelections } from '../services';
 
 const Recommendation = ({ calendarId, currentUserName, currentUserSelections, onClose }) => {
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const [loading, setLoading] = useState(true);
     const [recommendedDates, setRecommendedDates] = useState([]);
     const [currentDateIndex, setCurrentDateIndex] = useState(0);
@@ -263,7 +263,11 @@ const Recommendation = ({ calendarId, currentUserName, currentUserSelections, on
                                             lineHeight: 1.2
                                         }}
                                     >
-                                        {currentRecommendation && format(new Date(currentRecommendation.date), "EEEE, dd 'de' MMMM", { locale: es })}
+                                        {currentRecommendation && format(
+                                            new Date(currentRecommendation.date), 
+                                            language === 'es' ? "EEEE, dd 'de' MMMM" : "EEEE, MMMM dd", 
+                                            { locale: language === 'es' ? es : enUS }
+                                        )}
                                     </Typography>
                                     <Stack 
                                         direction={{ xs: "column", sm: "row" }} 

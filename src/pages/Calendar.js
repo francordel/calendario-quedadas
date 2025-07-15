@@ -3,7 +3,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useThemeMode } from "../contexts/ThemeContext";
 import { Calendar as BigCalendar, dateFnsLocalizer } from "react-big-calendar";
-import { es } from "date-fns/locale";
+import { es, enUS } from "date-fns/locale";
 import { format, parse, startOfWeek, getDay } from "date-fns";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { 
@@ -44,7 +44,7 @@ import { dayPropGetter } from './CalendarUtils';
 import Recommendation from '../components/Recommendation';
 import { saveUserSelections, getUserFromCalendar, fetchCalendarSelections } from '../services';
 
-const locales = { es };
+const locales = { es, en: enUS };
 
 const localizer = dateFnsLocalizer({
   format,
@@ -55,7 +55,7 @@ const localizer = dateFnsLocalizer({
 });
 
 function Calendar() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { isDark } = useThemeMode();
   const { calendarId } = useParams();
   const location = useLocation();
@@ -439,6 +439,7 @@ function Calendar() {
             selectable={true}
             onSelectSlot={handleSelectSlot}
             views={["month"]}
+            culture={language === 'es' ? 'es' : 'en'}
             style={{
               height: "100%",
               width: "100%",
@@ -450,9 +451,23 @@ function Calendar() {
                 dateHeader: ({ date, label }) => {
                   // Get votes for this specific date
                   const dateStr = date.toDateString();
-                  const currentUserVote = Object.keys(selectedDays).find(key => 
+                  
+                  // Get current user's vote - check both local state and backend
+                  const currentUserLocalVote = Object.keys(selectedDays).find(key => 
                     selectedDays[key].includes(dateStr)
                   );
+                  
+                  const currentUserBackendData = allUsers.find(user => 
+                    user.userId && userName && user.userId.trim() === userName.trim()
+                  );
+                  
+                  const currentUserBackendVote = currentUserBackendData?.selectedDays ? 
+                    Object.keys(currentUserBackendData.selectedDays).find(key => 
+                      currentUserBackendData.selectedDays[key].includes(dateStr)
+                    ) : null;
+                  
+                  // Use backend vote if available, otherwise use local vote
+                  const currentUserVote = currentUserBackendVote || currentUserLocalVote;
                   
                   // Get other users' votes for this date (excluding current user)
                   const otherUsersVotes = allUsers
@@ -611,9 +626,13 @@ function Calendar() {
                         },
                         '&:active': {
                           transform: 'scale(0.95)',
+                          backgroundColor: 'background.paper',
+                          borderColor: 'divider',
                         },
                         '&:focus': {
                           outline: 'none',
+                          backgroundColor: 'background.paper',
+                          borderColor: 'divider',
                         },
                       }}
                     >
@@ -664,9 +683,13 @@ function Calendar() {
                         },
                         '&:active': {
                           transform: 'scale(0.95)',
+                          backgroundColor: 'background.paper',
+                          borderColor: 'divider',
                         },
                         '&:focus': {
                           outline: 'none',
+                          backgroundColor: 'background.paper',
+                          borderColor: 'divider',
                         },
                       }}
                     >
@@ -767,7 +790,11 @@ function Calendar() {
             pb: 1,
             borderBottom: "1px solid #F2F2F7"
           }}>
-            {popupDate ? format(popupDate, "EEEE, dd 'de' MMMM", { locale: es }) : ""}
+            {popupDate ? format(
+              popupDate, 
+              language === 'es' ? "EEEE, dd 'de' MMMM" : "EEEE, MMMM dd", 
+              { locale: language === 'es' ? es : enUS }
+            ) : ""}
           </DialogTitle>
           
           <DialogContent sx={{ pt: 3, pb: 2 }}>
