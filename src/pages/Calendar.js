@@ -110,7 +110,7 @@ function Calendar() {
     };
 
     loadAllUsers();
-  }, [calendarId, userName, selectedDays]);
+  }, [calendarId]);
 
   // Calendar will automatically re-render when selectedDays or allUsers change
 
@@ -162,6 +162,11 @@ function Calendar() {
     try {
       setIsLoading(true);
       await saveUserSelections(userName, calendarId, selectedDays);
+      
+      // Reload all users to get the latest data
+      const users = await fetchCalendarSelections(calendarId);
+      setAllUsers(users);
+      
       setShowRecommendation(true);
       // Show share dialog after completing voting
       setTimeout(() => {
@@ -449,9 +454,12 @@ function Calendar() {
                     selectedDays[key].includes(dateStr)
                   );
                   
-                  // Get other users' votes for this date
+                  // Get other users' votes for this date (excluding current user)
                   const otherUsersVotes = allUsers
-                    .filter(user => user.userId !== userName)
+                    .filter(user => {
+                      const isCurrentUser = user.userId && userName && user.userId.trim() === userName.trim();
+                      return !isCurrentUser;
+                    })
                     .map(user => {
                       const userVote = user.selectedDays ? Object.keys(user.selectedDays).find(key => 
                         user.selectedDays[key].includes(dateStr)
