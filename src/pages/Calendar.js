@@ -485,7 +485,7 @@ function Calendar() {
 
                   return (
                     <Box 
-                      onClick={() => handleDateClick(date)}
+                      onMouseDown={e => { e.preventDefault(); e.stopPropagation(); handleDateClick(date); }}
                       sx={{ 
                         display: 'flex', 
                         flexDirection: 'column', 
@@ -786,7 +786,7 @@ function Calendar() {
           <DialogTitle sx={{ 
             textAlign: "center", 
             fontWeight: 600,
-            color: "#1C1C1E",
+            color: isDark ? '#FFF' : '#1C1C1E',
             pb: 1,
             borderBottom: "1px solid #F2F2F7"
           }}>
