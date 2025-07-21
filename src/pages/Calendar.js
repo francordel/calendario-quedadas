@@ -62,6 +62,7 @@ function Calendar() {
   const queryParams = new URLSearchParams(location.search);
   const userName = queryParams.get('name');
   const [selectedDays, setSelectedDays] = useState({ green: [], red: [], orange: [] });
+  const [modifiedDates, setModifiedDates] = useState(new Set()); // Track dates modified in this session
   const [popupDate, setPopupDate] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [showRecommendation, setShowRecommendation] = useState(false);
@@ -137,16 +138,23 @@ function Calendar() {
   };
 
   const handleDaySelection = (type) => {
+    const dateStr = popupDate.toDateString();
+    
+    // Track that this date has been modified in this session
+    setModifiedDates(prev => new Set(prev).add(dateStr));
+    
     setSelectedDays((prev) => {
       const updated = { ...prev };
-      const dateStr = popupDate.toDateString();
 
       // Eliminar la fecha de todos los estados previos
       Object.keys(updated).forEach((key) => {
         updated[key] = updated[key].filter((day) => day !== dateStr);
       });
 
-      updated[type].push(dateStr);
+      // Only add to the selected type if it's not 'clear'
+      if (type !== 'clear') {
+        updated[type].push(dateStr);
+      }
 
       return updated;
     });
@@ -161,7 +169,46 @@ function Calendar() {
   const handleFinish = async () => {
     try {
       setIsLoading(true);
-      await saveUserSelections(userName, calendarId, selectedDays);
+      
+      // Get current user's existing votes from backend
+      const existingUser = await getUserFromCalendar(calendarId, userName);
+      
+      // Merge existing votes with current session votes
+      let finalSelectedDays = { green: [], red: [], orange: [] };
+      
+      if (existingUser && existingUser.selectedDays) {
+        // Start with existing votes
+        finalSelectedDays = {
+          green: [...existingUser.selectedDays.green],
+          red: [...existingUser.selectedDays.red],
+          orange: [...existingUser.selectedDays.orange]
+        };
+      }
+      
+      // Remove existing votes for dates that were modified in this session
+      // (this handles both vote changes and vote clearing)
+      modifiedDates.forEach(dateStr => {
+        Object.keys(finalSelectedDays).forEach(voteType => {
+          finalSelectedDays[voteType] = finalSelectedDays[voteType].filter(d => d !== dateStr);
+        });
+      });
+
+      // Add the current session's votes
+      Object.keys(selectedDays).forEach(voteType => {
+        selectedDays[voteType].forEach(dateStr => {
+          if (!finalSelectedDays[voteType].includes(dateStr)) {
+            finalSelectedDays[voteType].push(dateStr);
+          }
+        });
+      });
+      
+      await saveUserSelections(userName, calendarId, finalSelectedDays);
+      
+      // Update local state to reflect the merged votes
+      setSelectedDays(finalSelectedDays);
+      
+      // Clear the modified dates since we've now saved them
+      setModifiedDates(new Set());
       
       // Reload all users to get the latest data
       const users = await fetchCalendarSelections(calendarId);
@@ -264,6 +311,8 @@ function Calendar() {
       if (existingUser && existingUser.selectedDays) {
         // User exists, load their existing data
         setSelectedDays(existingUser.selectedDays);
+        // Clear modified dates since we're loading from backend
+        setModifiedDates(new Set());
       }
 
       // Update URL to include the name
@@ -937,6 +986,26 @@ function Calendar() {
                 }}
               >
                 {t('notAvailable')}
+              </Button>
+
+              <Button 
+                onClick={() => handleDaySelection("clear")} 
+                fullWidth 
+                variant="outlined"
+                sx={{
+                  borderColor: "#8E8E93",
+                  color: "#8E8E93",
+                  py: 1.5,
+                  borderRadius: 1.5,
+                  fontWeight: 500,
+                  textTransform: "none",
+                  "&:hover": {
+                    borderColor: "#6D6D70",
+                    backgroundColor: "rgba(142, 142, 147, 0.04)",
+                  },
+                }}
+              >
+                {t('clearVote')}
               </Button>
             </Stack>
           </DialogContent>

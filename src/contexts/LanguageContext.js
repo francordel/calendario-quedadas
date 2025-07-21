@@ -113,7 +113,8 @@ const translations = {
     // Calendar vote display
     you: 'tú',
     more: 'más',
-    othersVoted: 'Otros han votado'
+    othersVoted: 'Otros han votado',
+    clearVote: 'Borrar voto'
   },
   
   en: {
@@ -219,7 +220,8 @@ const translations = {
     // Calendar vote display
     you: 'you',
     more: 'more',
-    othersVoted: 'Others voted'
+    othersVoted: 'Others voted',
+    clearVote: 'Clear vote'
   }
 };
 
