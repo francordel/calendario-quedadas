@@ -35,7 +35,8 @@ import {
   Share as ShareIcon,
   WhatsApp as WhatsAppIcon,
   Telegram as TelegramIcon,
-  ContentCopy as CopyIcon
+  ContentCopy as CopyIcon,
+  RemoveCircleOutline as RemoveIcon
 } from "@mui/icons-material";
 import "./Calendar.css";
 
@@ -992,6 +993,7 @@ function Calendar() {
                 onClick={() => handleDaySelection("clear")} 
                 fullWidth 
                 variant="outlined"
+                startIcon={<RemoveIcon />}
                 sx={{
                   borderColor: "#8E8E93",
                   color: "#8E8E93",
@@ -1005,7 +1007,7 @@ function Calendar() {
                   },
                 }}
               >
-                {t('clearVote')}
+                {t('removeVote')}
               </Button>
             </Stack>
           </DialogContent>

@@ -114,7 +114,9 @@ const translations = {
     you: 'tú',
     more: 'más',
     othersVoted: 'Otros han votado',
-    clearVote: 'Borrar voto'
+    clearVote: 'Borrar voto',
+    removeVote: 'Voto en blanco',
+    blankVote: 'Voto en blanco'
   },
   
   en: {
@@ -221,7 +223,9 @@ const translations = {
     you: 'you',
     more: 'more',
     othersVoted: 'Others voted',
-    clearVote: 'Clear vote'
+    clearVote: 'Clear vote',
+    removeVote: 'Remove vote',
+    blankVote: 'Blank vote'
   }
 };
 
