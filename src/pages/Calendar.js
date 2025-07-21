@@ -171,41 +171,51 @@ function Calendar() {
     try {
       setIsLoading(true);
       
-      // Get current user's existing votes from backend
+      // Get the latest backend data (in case someone else voted)
       const existingUser = await getUserFromCalendar(calendarId, userName);
-      
-      // Merge existing votes with current session votes
-      let finalSelectedDays = { green: [], red: [], orange: [] };
+      let backendVotes = { green: [], red: [], orange: [] };
       
       if (existingUser && existingUser.selectedDays) {
-        // Start with existing votes
-        finalSelectedDays = {
-          green: [...existingUser.selectedDays.green],
-          red: [...existingUser.selectedDays.red],
-          orange: [...existingUser.selectedDays.orange]
-        };
+        backendVotes = existingUser.selectedDays;
       }
       
-      // Remove existing votes for dates that were modified in this session
-      // (this handles both vote changes and vote clearing)
+      // Start with current backend state
+      let finalSelectedDays = {
+        green: [...backendVotes.green],
+        red: [...backendVotes.red],
+        orange: [...backendVotes.orange]
+      };
+      
+      // Function to find which vote type a date has in a votes object
+      const findVoteType = (dateStr, votesObj) => {
+        for (const [voteType, dates] of Object.entries(votesObj)) {
+          if (dates.includes(dateStr)) {
+            return voteType;
+          }
+        }
+        return null;
+      };
+      
+      // Apply only the changes that were actually modified in this session
       modifiedDates.forEach(dateStr => {
+        // Remove this date from all vote types first
         Object.keys(finalSelectedDays).forEach(voteType => {
           finalSelectedDays[voteType] = finalSelectedDays[voteType].filter(d => d !== dateStr);
         });
-      });
-
-      // Add the current session's votes
-      Object.keys(selectedDays).forEach(voteType => {
-        selectedDays[voteType].forEach(dateStr => {
-          if (!finalSelectedDays[voteType].includes(dateStr)) {
-            finalSelectedDays[voteType].push(dateStr);
-          }
-        });
+        
+        // Find where this date is in the current selectedDays
+        const currentVoteType = findVoteType(dateStr, selectedDays);
+        
+        // If the date has a vote in current state, add it
+        if (currentVoteType) {
+          finalSelectedDays[currentVoteType].push(dateStr);
+        }
+        // If currentVoteType is null, the date was removed (blank vote)
       });
       
       await saveUserSelections(userName, calendarId, finalSelectedDays);
       
-      // Update local state to reflect the merged votes
+      // Update local state
       setSelectedDays(finalSelectedDays);
       
       // Clear the modified dates since we've now saved them
@@ -312,7 +322,7 @@ function Calendar() {
       if (existingUser && existingUser.selectedDays) {
         // User exists, load their existing data
         setSelectedDays(existingUser.selectedDays);
-        // Clear modified dates since we're loading from backend
+        // Clear modified dates since we're starting fresh
         setModifiedDates(new Set());
       }
 
