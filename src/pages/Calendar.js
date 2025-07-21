@@ -512,7 +512,7 @@ function Calendar() {
                   // Get votes for this specific date
                   const dateStr = date.toDateString();
                   
-                  // Get current user's vote - check both local state and backend
+                  // Get current user's vote - prioritize local changes over backend
                   const currentUserLocalVote = Object.keys(selectedDays).find(key => 
                     selectedDays[key].includes(dateStr)
                   );
@@ -526,8 +526,10 @@ function Calendar() {
                       currentUserBackendData.selectedDays[key].includes(dateStr)
                     ) : null;
                   
-                  // Use backend vote if available, otherwise use local vote
-                  const currentUserVote = currentUserBackendVote || currentUserLocalVote;
+                  // If this date was modified in current session, use local vote
+                  // Otherwise, fall back to backend vote
+                  const dateHasBeenModified = modifiedDates.has(dateStr);
+                  const currentUserVote = dateHasBeenModified ? currentUserLocalVote : (currentUserLocalVote || currentUserBackendVote);
                   
                   // Get other users' votes for this date (excluding current user)
                   const otherUsersVotes = allUsers
