@@ -801,6 +801,85 @@ function Calendar() {
             <Typography variant="body2" color="#8E8E93" textAlign="center" sx={{ mb: 3 }}>
               ¿Cuál es tu disponibilidad para este día?
             </Typography>
+
+            {/* Show what others have voted for this day */}
+            {(() => {
+              if (!popupDate) return null;
+              
+              const dateStr = popupDate.toDateString();
+              const otherUsersVotes = allUsers
+                .filter(user => {
+                  const isCurrentUser = user.userId && userName && user.userId.trim() === userName.trim();
+                  return !isCurrentUser;
+                })
+                .map(user => {
+                  const userVote = user.selectedDays ? Object.keys(user.selectedDays).find(key => 
+                    user.selectedDays[key].includes(dateStr)
+                  ) : null;
+                  return userVote ? { userId: user.userId, vote: userVote } : null;
+                })
+                .filter(Boolean);
+
+              if (otherUsersVotes.length === 0) return null;
+
+              return (
+                <Paper
+                  elevation={0}
+                  sx={{
+                    p: 2,
+                    mb: 3,
+                    backgroundColor: "#F8F9FA",
+                    border: "1px solid #E9ECEF",
+                    borderRadius: 2,
+                  }}
+                >
+                  <Typography variant="body2" fontWeight={500} sx={{ mb: 2, color: "#495057" }}>
+                    {t('othersVoted')} ({otherUsersVotes.length}):
+                  </Typography>
+                  <Stack spacing={1}>
+                    {otherUsersVotes.map((userVote, index) => (
+                      <Box
+                        key={`${userVote.userId}-${index}`}
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1,
+                          p: 1,
+                          borderRadius: 1,
+                          backgroundColor: 'white',
+                          border: '1px solid #E9ECEF',
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            width: 12,
+                            height: 12,
+                            borderRadius: '50%',
+                            backgroundColor: 
+                              userVote.vote === 'green' ? '#28A745' :
+                              userVote.vote === 'red' ? '#FF3B30' :
+                              userVote.vote === 'orange' ? '#FF9500' : '#6C757D',
+                          }}
+                        />
+                        <Typography variant="body2" sx={{ flex: 1, color: '#495057' }}>
+                          {userVote.userId}
+                        </Typography>
+                        <Typography variant="body2" fontWeight={500} sx={{ 
+                          color: 
+                            userVote.vote === 'green' ? '#28A745' :
+                            userVote.vote === 'red' ? '#FF3B30' :
+                            userVote.vote === 'orange' ? '#FF9500' : '#6C757D'
+                        }}>
+                          {userVote.vote === 'green' ? t('available') : 
+                           userVote.vote === 'red' ? t('notAvailable') : 
+                           t('maybe')}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Stack>
+                </Paper>
+              );
+            })()}
             
             <Stack spacing={2}>
               <Button 

@@ -64,6 +64,7 @@ const translations = {
     back: 'Volver',
     backToHome: 'Volver al inicio',
     previousStep: 'Paso anterior',
+    finish: 'Finalizar',
     
     // Messages
     enterName: 'Por favor, introduce tu nombre',
@@ -81,8 +82,6 @@ const translations = {
     noAvailableDates: 'No hay fechas disponibles',
     noAvailableDatesDesc: 'No se encontraron fechas con disponibilidad positiva.',
     noPositiveAvailability: 'No se encontraron fechas con disponibilidad positiva.',
-    recommendation: 'Recomendación',
-    saving: 'Guardando',
     of: 'de',
     score: 'Puntuación',
     detailedBreakdown: 'Desglose por persona',
@@ -109,12 +108,12 @@ const translations = {
     // Loading states
     creating: 'Creando...', 
     accessing: 'Accediendo...', 
-    saving: 'Guardando...', 
     verifying: 'Verificando...', 
     
     // Calendar vote display
     you: 'tú',
-    more: 'más'
+    more: 'más',
+    othersVoted: 'Otros han votado'
   },
   
   en: {
@@ -171,6 +170,7 @@ const translations = {
     back: 'Back',
     backToHome: 'Back to home',
     previousStep: 'Previous step',
+    finish: 'Finish',
     
     // Messages
     enterName: 'Please enter your name',
@@ -188,7 +188,6 @@ const translations = {
     noAvailableDates: 'No available dates',
     noAvailableDatesDesc: 'No dates with positive availability found.',
     noPositiveAvailability: 'No dates with positive availability found.',
-    recommendation: 'Recommendation',
     of: 'of',
     score: 'Score',
     detailedBreakdown: 'Breakdown by person',
@@ -215,12 +214,12 @@ const translations = {
     // Loading states
     creating: 'Creating...', 
     accessing: 'Accessing...', 
-    saving: 'Saving...', 
     verifying: 'Verifying...', 
     
     // Calendar vote display
     you: 'you',
-    more: 'more'
+    more: 'more',
+    othersVoted: 'Others voted'
   }
 };
 
