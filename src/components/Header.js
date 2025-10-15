@@ -45,10 +45,10 @@ function Header() {
       <Toolbar sx={{ px: { xs: 2, md: 4 }, py: 1.5, minHeight: '72px' }}>
         <Stack direction="row" alignItems="center" spacing={2} sx={{ flex: 1 }}>
           {/* Logo */}
-          <Box 
-            sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
               cursor: 'pointer',
               '&:hover': { opacity: 0.8 },
               transition: 'opacity 0.2s ease'
@@ -56,24 +56,19 @@ function Header() {
             onClick={() => navigate('/')}
           >
             <Box
+              component="img"
+              src="/images/KDEMOS_logo.png"
+              alt="Kdemos Logo"
               sx={{
-                width: 40,
                 height: 40,
-                borderRadius: 2,
-                backgroundColor: '#007AFF',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                width: 'auto',
                 mr: 1.5,
-                boxShadow: '0 2px 8px rgba(0, 122, 255, 0.3)',
               }}
-            >
-              <CalendarIcon sx={{ color: 'white', fontSize: 20 }} />
-            </Box>
-            <Typography 
-              variant="h6" 
-              sx={{ 
-                fontWeight: 700, 
+            />
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 700,
                 color: 'text.primary',
                 fontSize: { xs: '1.1rem', md: '1.25rem' },
                 fontFamily: "'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
