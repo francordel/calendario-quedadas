@@ -88,7 +88,7 @@ function Footer() {
             >
               <Avatar
                 alt="Fran Cortés"
-                src="/images/FranCortes2.jpeg"
+                src="/images/FranCortes2.webp"
                 sx={{ 
                   width: { xs: 20, md: 24 }, 
                   height: { xs: 20, md: 24 },

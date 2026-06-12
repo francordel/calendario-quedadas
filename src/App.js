@@ -1,12 +1,13 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import Home from "./pages/Home";
-import Calendar from "./pages/Calendar";
 import { Box, CssBaseline, ThemeProvider as MuiThemeProvider } from "@mui/material";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { CustomThemeProvider, useThemeMode } from "./contexts/ThemeContext";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import Home from "./pages/Home";
+
+const Calendar = lazy(() => import("./pages/Calendar"));
 
 // App content component that uses theme
 function AppContent() {
@@ -36,7 +37,11 @@ function AppContent() {
           >
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/:calendarId" element={<Calendar />} />
+              <Route path="/:calendarId" element={
+                <Suspense fallback={null}>
+                  <Calendar />
+                </Suspense>
+              } />
             </Routes>
           </Box>
           

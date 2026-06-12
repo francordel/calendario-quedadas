@@ -185,7 +185,7 @@ function Header() {
             >
               <Avatar
                 alt="Fran Cortés"
-                src="/images/FranCortes2.jpeg"
+                src="/images/FranCortes2.webp"
                 sx={{ 
                   width: 32, 
                   height: 32,
