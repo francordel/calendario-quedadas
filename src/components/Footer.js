@@ -127,7 +127,7 @@ function Footer() {
               {t('advertising')}
               <Typography
                 component="a"
-                href="https://misintaxis5.wordpress.com"
+                href="https://misintaxis.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 variant="body2"
