@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-H4DZHRG9N2"></script>
@@ -12,14 +12,58 @@
     </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kdemos</title>
+
+    <title>KDEMOS — Organiza quedadas y reuniones compartiendo disponibilidad</title>
+    <meta name="description" content="Encuentra el mejor día para quedar con tus amigos o tu equipo: crea un calendario, comparte el enlace por WhatsApp y cada uno marca su disponibilidad. Gratis y sin registro." />
+    <meta name="keywords" content="organizar quedadas, encontrar día para quedar, calendario compartido amigos, coordinar reuniones, disponibilidad grupo, doodle alternativa español" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="theme-color" content="#1a73e8" />
+    <link rel="canonical" href="https://kdemos.com/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="KDEMOS" />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:url" content="https://kdemos.com/" />
+    <meta property="og:title" content="KDEMOS — Organiza quedadas compartiendo disponibilidad" />
+    <meta property="og:description" content="Crea un calendario, comparte el enlace por WhatsApp y encuentra el mejor día para quedar. Gratis." />
+    <meta property="og:image" content="https://kdemos.com/images/KDEMOS_logo.png" />
+    <meta property="twitter:card" content="summary" />
+    <meta property="twitter:title" content="KDEMOS — Organiza quedadas compartiendo disponibilidad" />
+    <meta property="twitter:description" content="Crea un calendario, comparte el enlace y encuentra el mejor día para quedar. Gratis." />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "KDEMOS",
+      "url": "https://kdemos.com/",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Web",
+      "inLanguage": "es",
+      "description": "Organiza quedadas y reuniones compartiendo tu disponibilidad: crea un calendario, comparte el enlace y encuentra el mejor día para todos.",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" }
+    }
+    </script>
+
     <link rel="icon" type="image/png" href="%PUBLIC_URL%/images/KDEMOS_logo.png" />
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-  </head>  
+  </head>
 <body>
-  <div id="root"></div>
+  <!-- Contenido estático para buscadores: React lo reemplaza al montar,
+       pero el rastreador lo ve en el HTML inicial (la SPA llegaba vacía). -->
+  <div id="root">
+    <h1>KDEMOS — organiza quedadas compartiendo disponibilidad</h1>
+    <p>
+      Encuentra el mejor día para quedar con tus amigos o coordinar una
+      reunión con tu equipo: crea un calendario, comparte el enlace por
+      WhatsApp o Telegram y cada persona marca los días que le vienen bien.
+      Gratis, online y sin registro.
+    </p>
+    <noscript>KDEMOS necesita JavaScript para funcionar. Actívalo y recarga la página.</noscript>
+  </div>
 </body>
 </html>
