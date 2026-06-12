@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+# URLs de spam SEO que apuntan a rutas inexistentes (la SPA responde 200 a
+# todo): que los buscadores ni las rastreen.
+Disallow: /search/
 
 Sitemap: https://kdemos.com/sitemap.xml
